@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="keywords" content="emf37 emf37_blog">
+<meta name="description" content="Always Plosion | Markdown苦手">
+<meta name="theme-color" content="#666">
+<title>CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho | EMF37</title>
+<link rel="shortcut icon" href="/favicon.ico?v=1615107615556">
+<link rel="stylesheet" href="/media/css/pisces.css">
+<link rel="stylesheet" href="/media/fonts/font-awesome.css">
+<link
+  href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Rosario:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext"
+  rel="stylesheet" type="text/css">
+
+<link href="/media/hljs/styles/color-brewer.css"
+  rel="stylesheet">
+
+<link rel="stylesheet" href="/styles/main.css">
+
+<script src="/media/hljs/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.0/velocity.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.0/velocity.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
+  integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
+  integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
+  integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+  onload="renderMathInElement(document.body);"></script>
+
+
+
+
+
+  <meta name="description" content="CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho" />
+  <meta name="keywords" content="Linux" />
+</head>
+
+<body>
+  <div class="head-top-line"></div>
+  <div class="header-box">
+    
+<div class="pisces">
+  <header class="header  ">
+    <div class="blog-header box-shadow-wrapper bg-color " id="header">
+      <div class="nav-toggle" id="nav_toggle">
+        <div class="toggle-box">
+          <div class="line line-top"></div>
+          <div class="line line-center"></div>
+          <div class="line line-bottom"></div>
+        </div>
+      </div>
+      <div class="site-meta">       
+        <div class="site-title">
+          
+            <a href="/" class="brand">
+              <span>EMF37</span>
+            </a>  
+          
+        </div>
+        
+          <p class="subtitle">谁不想闲得没事写写东西呢</p>
+        
+      </div>
+      <nav class="site-nav" id="site_nav">
+        <ul id="nav_ul">
+          
+            
+            
+              
+            
+            <li class="nav-item ">
+              
+              
+                <a href="/" target="_self">
+                  <i class="fa fa-home"></i> 首页
+                </a>
+              
+            </li>
+          
+            
+            
+              
+            
+            <li class="nav-item ">
+              
+              
+                <a href="/archives/" target="_self">
+                  <i class="fa fa-archive"></i> 归档
+                </a>
+              
+            </li>
+          
+            
+            
+              
+            
+            <li class="nav-item ">
+              
+              
+                <a href="/tags/" target="_self">
+                  <i class="fa fa-tags"></i> 标签
+                </a>
+              
+            </li>
+          
+            
+            
+              
+            
+            <li class="nav-item ">
+              
+              
+                <a href="/post/about/" target="_self">
+                  <i class="fa fa-user"></i> 关于
+                </a>
+              
+            </li>
+          
+          
+            
+              <li class="nav-item ">
+                <a href="/friends/" target="_self">
+                  
+                    <i class="fa fa-address-book"></i> 友情链接
+                  
+                </a>
+              </li>
+            
+          
+          
+            <li id="fa_search" class="nav-item">
+              <a href="javascript:void(0);">
+                <i class="fa fa-search"></i> <span class="language" data-lan="search">搜索</span>
+              </a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </header>
+</div>
+
+<script type="text/javascript"> 
+ 
+  let showNav = true;
+
+  let navToggle = document.querySelector('#nav_toggle'),
+  siteNav = document.querySelector('#site_nav');
+  
+  function navClick() {
+    let sideBar = document.querySelector('.sidebar');
+    let navUl = document.querySelector('#nav_ul');
+    navToggle.classList.toggle('nav-toggle-active');
+    siteNav.classList.toggle('nav-menu-active');
+    if (siteNav.classList.contains('nav-menu-active')) {
+      siteNav.style = "height: " + (navUl.children.length * 42) +"px !important";
+    } else {
+      siteNav.style = "";
+    }
+  }
+
+  navToggle.addEventListener('click',navClick);  
+</script>
+  </div>
+  <div class="main-continer">
+    
+    <div
+      class="section-layout pisces ">
+      <div class="section-layout-wrapper">
+        
+
+<div class="sidebar">
+  
+    <div class="sidebar-box box-shadow-wrapper bg-color right-motion" id="sidebar">
+      
+        <div class="post-list-sidebar">
+          <div class="sidebar-title">
+            <span id="tocSideBar" class="sidebar-title-item sidebar-title-active language" data-lan="index">文章目录</span>
+            <span id="metaSideBar" class="sidebar-title-item language" data-lan="preview">站点概览</span>
+          </div>
+        </div>
+      
+      <div class="sidebar-body pisces" id="sidebar_body">
+        
+          
+            <div class="post-side-meta" id="post_side_meta">
+              
+<div class="sidebar-wrapper box-shadow-wrapper bg-color">
+  <div class="sidebar-item">
+    <img class="site-author-image right-motion" src="/images/avatar.png"/>
+    <p class="site-author-name">ExplosiveMosFET</p>
+    
+    <div class="site-description right-motion">
+      
+      
+      
+        <p>Markdown苦手，比甘草片还苦</p>
+      
+      
+    </div>
+    
+  </div>
+  <div class="sidebar-item side-item-stat right-motion">
+    <div class="sidebar-item-box">
+      <a href="/archives/">
+        
+        <span class="site-item-stat-count">12</span>
+        <span class="site-item-stat-name language" data-lan="article">文章</span>
+      </a>
+    </div>
+    <div class="sidebar-item-box">
+      <a href="">
+        <span class="site-item-stat-count">2</span>
+        <span class="site-item-stat-name language" data-lan="category">分类</span>
+      </a>
+    </div>
+    <div class="sidebar-item-box">
+      <a href="/tags/">
+        <span class="site-item-stat-count">2</span>
+        <span class="site-item-stat-name language" data-lan="tag">标签</span>
+      </a>
+    </div>
+  </div>
+  
+    
+      <div class="sidebar-item">
+        <span class="site-item-rss">
+            <i class="fa fa-rss"></i>
+            <a href="https://emf37.github.io/atom.xml" target="_blank">RSS</a>
+        </span>
+      </div>
+    
+  
+  
+
+
+
+  <div style="width: 100%; position: relative;">
+    <canvas id="canvasDiyBlock" style="width:100%;">当前浏览器不支持canvas，请更换浏览器后再试</canvas>
+    <script src="/media/js/magic/clock.js"></script>
+  </div>
+
+</div>
+            </div>
+            <div class="post-toc sidebar-body-active" id="post_toc" style="opacity: 1;">
+              <div class="toc-box right-motion">
+  <div class="toc-wrapper auto-number auto"
+    id="toc_wrapper">
+    <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><strong>前期准备</strong></a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E9%98%B6%E6%AE%B5"><strong>安装阶段</strong></a></li>
+<li><a href="#%E9%85%8D%E7%BD%AE%E9%98%B6%E6%AE%B5"><strong>配置阶段</strong></a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E9%98%B6%E6%AE%B5"><strong>启动阶段</strong></a></li>
+<li><a href="#%E7%84%B6%E5%90%8E%E5%B0%B1%E5%8F%AF%E4%BB%A5%E8%BF%9B%E5%85%A5typecho%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B5%E9%9D%A2%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE%E5%95%A6"><em><strong>然后就可以进入Typecho的初始化页面进行配置啦！</strong></em></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</div>
+
+<script>
+
+  let lastTop = 0, lList = [], hList = [], postBody, lastIndex = -1;
+  let active = 'active-show', activeClass = 'active-current';
+  let tocWrapper = document.querySelector('#toc_wrapper');
+  let tocContent = tocWrapper.children[0];
+  let autoNumber = tocWrapper && tocWrapper.classList.contains('auto-number');
+
+  function addTocNumber(elem, deep) {
+    if (!elem) {
+      return;
+    }
+    let prop = elem.__proto__;
+
+    if (prop === HTMLUListElement.prototype) {
+      for (let i = 0; i < elem.children.length; i++) {
+        addTocNumber(elem.children[i], deep + (i + 1) + '.');
+      }
+    } else if (prop === HTMLLIElement.prototype) {
+      // 保存li元素
+      if (elem.children[0] && elem.children[0].__proto__ === HTMLAnchorElement.prototype) {
+        lList.push(elem);
+      }
+      for (let i = 0; i < elem.children.length; i++) {
+        let cur = elem.children[i];
+        if (cur.__proto__ === HTMLAnchorElement.prototype) {
+          if (autoNumber) {
+            cur.text = deep + ' ' + cur.text;
+          }
+        } else if (cur.__proto__ === HTMLUListElement.prototype) {
+          addTocNumber(cur, deep);
+        }
+      }
+    }
+  }
+
+  function removeParentActiveClass() {
+    let parents = tocContent.querySelectorAll('.' + active)
+    parents.forEach(function (elem) {
+      elem.classList.remove(active);
+    });
+  }
+
+  function addActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.add(activeClass);
+    }
+  }
+
+  function removeActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.remove(activeClass);
+    }
+  }
+
+  function addActiveLiElemment(elem, parent) {
+    if (!elem || elem === parent) {
+      return;
+    } else {
+      if (elem.__proto__ === HTMLLIElement.prototype) {
+        elem.classList.add(active);
+      }
+      addActiveLiElemment(elem.parentElement, parent);
+    }
+  }
+
+  function showToc() {
+    if (tocWrapper) {
+      postBody = document.querySelector('#post_body');
+      for (let i = 0; i < postBody.children.length; i++) {
+        if (postBody.children[i].__proto__ === HTMLHeadingElement.prototype) {
+          hList.push(postBody.children[i]);
+        }
+      }
+      if (tocWrapper.classList.contains('compress')) {
+        tocContent.classList.add('closed');
+      } else if (tocWrapper.classList.contains('no_compress')) {
+        tocContent.classList.add('expanded');
+      } else {
+        if (hList.length > 10) {
+          active = 'active-hidden'
+          tocContent.classList.add('closed');
+        } else {
+          tocContent.classList.add('expanded');
+        }
+      }
+    }
+  }
+
+  (function () {
+    // 处理不是从#一级标题开始目录
+    if (tocContent.children.length === 1 && tocContent.children[0].__proto__ === HTMLLIElement.prototype) {
+      let con = tocContent.children[0].children[0];
+      tocContent.innerHTML = con.innerHTML;
+    }
+    let markdownItTOC = document.querySelector('.markdownIt-TOC');
+    let innerHeight = window.innerHeight;
+    markdownItTOC.style = `max-height: ${innerHeight - 80 > 0 ? innerHeight - 80 : innerHeight}px`
+    addTocNumber(tocContent, '');
+  })();
+
+  document.addEventListener('scroll', function (e) {
+    if (lList.length <= 0) {
+      return;
+    }
+    let scrollTop = document.scrollingElement.scrollTop + 10;
+    let dir;
+
+    if (lastTop - scrollTop > 0) {
+      dir = 'up';
+    } else {
+      dir = 'down';
+    }
+
+    lastTop = scrollTop;
+    if (scrollTop <= 0) {
+      if (lastIndex >= 0 && lastIndex < hList.length) {
+        lList[lastIndex].classList.remove(activeClass);
+      }
+      return;
+    }
+
+    let current = 0, hasFind = false;
+    for (let i = 0; i < hList.length; i++) {
+      if (hList[i].offsetTop > scrollTop) {
+        current = i;
+        hasFind = true;
+        break;
+      }
+    }
+    if (!hasFind && scrollTop > lList[lList.length - 1].offsetTop) {
+      current = hList.length - 1;
+    } else {
+      current--;
+    }
+    if (dir === 'down') {
+      if (current > lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex)
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    } else {
+      if (current < lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex);
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    }
+  });
+
+
+  window.addEventListener('load', function () {
+    showToc();
+    document.querySelector('#sidebar').style = 'display: block;';
+    tocWrapper.classList.add('toc-active');
+    setTimeout(function () {
+      if ("createEvent" in document) {
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent("scroll", false, true);
+        document.dispatchEvent(evt);
+      }
+      else {
+        document.fireEvent("scroll");
+      }
+    }, 500)
+  })
+
+</script>
+            </div>
+          
+        
+      </div>
+    </div>
+  
+</div>
+<script>
+  const SIDEBAR_TITLE_ACTIVE = 'sidebar-title-active';
+  const SIDEBAR_BODY_ACTIVE = 'sidebar-body-active';
+  const SLIDE_UP_IN = 'slide-up-in';
+
+  let sidebar = document.querySelector('#sidebar'),
+  tocSideBar = document.querySelector('#tocSideBar'),
+  metaSideBar = document.querySelector('#metaSideBar'),
+  postToc = document.querySelector('#post_toc'),
+  postSiteMeta = document.querySelector('#post_side_meta'),
+  sidebarTitle = document.querySelector('.sidebar-title'),
+  sidebarBody = document.querySelector('#sidebar_body');
+
+  tocSideBar && tocSideBar.addEventListener('click', (e) => {
+    toggleSidebar(e);
+  });
+
+  metaSideBar && metaSideBar.addEventListener('click', (e) => {
+    toggleSidebar(e);
+  });
+
+  function toggleSidebar(e) {
+    let currentTitle = document.querySelector("."+SIDEBAR_TITLE_ACTIVE);
+    if (currentTitle == e.srcElement) {
+      return ;
+    }
+    let current, showElement, hideElement;
+    if (e.srcElement == metaSideBar) {
+      showElement = postSiteMeta;
+      hideElement = postToc;
+    } else if (e.srcElement == tocSideBar){
+      showElement = postToc;
+      hideElement = postSiteMeta;
+    }
+    currentTitle.classList.remove(SIDEBAR_TITLE_ACTIVE);
+    e.srcElement.classList.add(SIDEBAR_TITLE_ACTIVE);
+
+    window.Velocity(hideElement, 'stop');
+    window.Velocity(hideElement, 'transition.slideUpOut', {
+      display: 'none',
+      duration: 200,
+      complete: function () {
+        window.Velocity(showElement, 'transition.slideDownIn', {
+          duration: 200
+        });
+      }
+    })
+    hideElement.classList.remove(SIDEBAR_BODY_ACTIVE);
+    showElement.classList.add(SIDEBAR_BODY_ACTIVE);
+  }
+
+  postToc && postToc.addEventListener('transitionend', function() {
+    this.classList.remove(SLIDE_UP_IN);
+  });
+
+  if (sidebarBody) {
+    if (sidebarBody.classList.contains('pisces') || sidebarBody.classList.contains('gemini')) {
+      let hasFix = false;
+      let scrollEl = document.querySelector('.main-continer');
+      let limitTop = document.querySelector('#nav_ul').children.length * 42 + 162;
+      window.addEventListener('scroll', function(e) {
+        if (document.scrollingElement.scrollTop >= limitTop) {
+          if (!hasFix) {
+            sidebar.classList.add('sidebar-fixed');
+            hasFix = true;
+          }
+        } else {
+          if (hasFix) {
+            sidebar.classList.remove('sidebar-fixed');
+            hasFix = false;
+          }
+        }
+      });
+    }
+  }
+  
+</script>
+        <div class="section-box box-shadow-wrapper">
+          <div class="section bg-color post post-page">
+            <section class="post-header">
+  <h1 class="post-title">
+    <a class="post-title-link" href="https://emf37.github.io/e7bOCe0fp/">
+      CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho
+    </a>
+  </h1>
+  <div class="post-meta">
+    
+    <span class="meta-item pc-show">
+      <i class="fa fa-calendar-o"></i>
+      <span class="language" data-lan="publish">发布于</span>
+      <span class="publish-time" data-t="2019-01-29 21:36:07">2019-01-29</span>
+      <span class="post-meta-divider pc-show">|</span>
+    </span>
+    
+    <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://emf37.github.io/tag/0cf1fuXXt/">
+        <span>Linux</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
+      <i class="fa fa-clock-o"></i>
+      <span>3<span class="language" data-lan="minute">分钟</span></span>
+    </span>
+    <span class="meta-item">
+      <span class="post-meta-divider">|</span>
+      <i class="fa fa-file-word-o"></i>
+      <span>627<span class="pc-show language" data-lan="words">字数</span></span>
+    </span>
+    
+    
+    
+    <span id="/e7bOCe0fp/" data-flag-title="CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho" class="meta-item pc-show leancloud_visitors">
+      <span class="post-meta-divider">|</span>
+      <i class="fa fa-eye"></i>
+      <span><span class="language" data-lan="view">浏览量</span>：<span class="leancloud-visitors-count"></span></span>
+    </span>
+    
+  </div>
+</section>
+            <div class="post-body next-md-body" id="post_body">
+              <p><em>开头先吐槽一下我看不懂的Caddy Doc, 是真的看不懂</em><br>
+<em>再吐槽一下Typecho的Markdown解释器，wdnmd</em></p>
+<hr>
+<ul>
+<li>
+<h3 id="前期准备"><strong>前期准备</strong></h3>
+<ol>
+<li>需要一台CentOS 7系统主机 [RH7也行，你开心就好] (略)</li>
+<li>需要一个域名(略)</li>
+<li>安装epel源，用黄狗或者RPM：<br>
+<code>sudo yum install epel-release</code><br>
+或<br>
+<code>sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm</code></li>
+<li>安装webtatic源，由于CentOS官方源+epel源中仅提供了5.4版本的rpm，秉承着安新不安旧的原则，我选择安装7.2版本，这里就需要添加webtatic源：<br>
+<code>sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</code></li>
+<li>刷新Cache<br>
+<code>sudo yum makecache</code></li>
+<li>(可选) 安装Wget<br>
+<code>sudo yum install wget -y</code></li>
+</ol>
+</li>
+<li>
+<h3 id="安装阶段"><strong>安装阶段</strong></h3>
+<ol>
+<li>首先安装Caddy<br>
+<code>sudo yum install caddy -y</code></li>
+<li>其次安装PHP7.2<br>
+<code>sudo yum install php72w php72w-cli php72w-common php72w-devel php72w-embedded php72w-fpm php72w-gd php72w-mbstring php72w-mysqlnd php72w-opcache php72w-pdo php72w-xml -y</code></li>
+<li>然后安装MariaDB<br>
+<code>sudo yum install mariadb mariadb-server -y</code></li>
+<li>最后下载Typecho{这里使用Stable v1.1 (17.10.30), 我对版本没啥特殊要求}<br>
+<code>wget -O &quot;typecho.tar.gz&quot; http://typecho.org/downloads/1.1-17.10.30-release.tar.gz</code></li>
+</ol>
+</li>
+<li>
+<h3 id="配置阶段"><strong>配置阶段</strong></h3>
+<ul>
+<li><strong>配置Caddy</strong></li>
+<li><strong>配置Caddy.conf</strong><br>
+caddy使用所谓指令（Directives）来描述功能进行配置，所以首先配置他，简易配置见本文尾部</li>
+<li><strong>创建日志文件并修改权限</strong><br>
+<code>sudo mkdir /var/log/caddy &amp;&amp; touch /var/log/caddy/caddy.log</code><br>
+<code>sudo chown caddy:caddy /var/log/caddy/caddy.log</code></li>
+<li><strong>配置PHP</strong><br>
+<code>sudo vi /etc/php-fpm.d/www.conf</code><br>
+修改如下参数<br>
+<code>user = caddy</code><br>
+<code>group = caddy</code><br>
+<code>listen = 127.0.0.1:9000</code></li>
+<li><strong>配置MariaDB</strong><br>
+<code>sudo mysql_secure_installation</code><br>
+根据提示设定数据库密码，初始化配置（个人配置为YNYY<br>
+创建typecho数据库<br>
+<code>mysql -uroot -p -se &quot;create database typecho;&quot;</code></li>
+<li><strong>配置Typecho</strong><br>
+解压typecho<br>
+<code>tar -zxvf typecho.tar.gz</code><br>
+移动内容至Caddy目录<br>
+<code>mv build/ /usr/share/caddy/</code></li>
+</ul>
+</li>
+<li>
+<h3 id="启动阶段"><strong>启动阶段</strong></h3>
+<ul>
+<li><strong>启动php-fpm并设定开机自起</strong><br>
+<code>systemctl restart php-fpm &amp;&amp; systemctl enable php-fpm</code></li>
+<li><strong>启动MariaDB并设定开机自起</strong><br>
+<code>systemctl restart mariadb &amp;&amp; systemctl enable mariadb</code></li>
+<li>启动Caddy并设定开机自起<br>
+<code>systemctl restart caddy &amp;&amp; systemctl enable caddy</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="然后就可以进入typecho的初始化页面进行配置啦"><em><strong>然后就可以进入Typecho的初始化页面进行配置啦！</strong></em></h3>
+<p><strong>####PS：Caddy.conf####</strong></p>
+<pre><code>:80  
+{  
+gzip  
+redir https://(1).(2){url}  
+}  
+(1).(2)  
+{  
+root /usr/share/caddy  
+log /var/log/caddy/caddy.log  
+tls &quot;YOUR MAIL ADDR&quot;  
+fastcgi / 127.0.0.1:9000 php  
+rewrite {  
+if {path} not_match ^\/admin  
+to {path} {path}/ /index.php?{query}  
+}  
+}  
+www.(2) {  
+log /var/log/caddy/caddy.log  
+tls &quot;YOUR MAIL ADDR&quot;  
+redir https://(1).(2){url}  
+}  
+import conf.d/*.conf 
+</code></pre>
+<p><strong>说明</strong></p>
+<blockquote>
+<p>'(1)'是指A记录所解析的部分<br>
+'(2)'指域名<br>
+'tls' 为你的邮箱地址'用于Let's Encrypt证书下发</p>
+</blockquote>
+
+            </div>
+            
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      ExplosiveMosFET
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://emf37.github.io/e7bOCe0fp/" title="CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho">https://emf37.github.io/e7bOCe0fp/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://emf37.github.io/tag/0cf1fuXXt/"># Linux</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="记一次折腾寨板的经历" href="https://emf37.github.io/BF0wQKc0Q/">记一次折腾寨板的经历</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="记一次折腾寨板的经历" href="https://emf37.github.io/BF0wQKc0Q/">上一篇</a>
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="openSUSE X120e启用GOBI 2000 GPS " href="https://emf37.github.io/aefsk_xbK/">openSUSE X120e启用GOBI 2000 GPS </a>
+        <a class="nav-mobile-next" title="openSUSE X120e启用GOBI 2000 GPS " href="https://emf37.github.io/aefsk_xbK/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
+            
+            
+  
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-box">
+  <footer class="footer">
+    <div class="copyright">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | © 2019-2020 Theme By <a
+        href="https://github.com/hsxyhao/gridea-theme-next" target="_blank">HsxyHao</a>
+    </div>
+    <div class="poweredby">
+      
+    </div>
+  </footer>
+  
+  
+  <div class="pisces back-to-top" id="back_to_top">
+    <i class="fa fa-arrow-up"></i>
+    
+    <span class="scrollpercent">
+      <span id="back_to_top_text">0</span>%
+    </span>
+    
+  </div>
+  
+  
+  
+  <div class="bg-img">
+    <img src="/media/images/custom-bgImg.jpg" />
+  </div>
+  
+  
+  
+  
+</div>
+<script>
+
+  let sideBarOpen = 'sidebar-open';
+  let body = document.body;
+  let back2Top = document.querySelector('#back_to_top'),
+    back2TopText = document.querySelector('#back_to_top_text'),
+    drawerBox = document.querySelector('#drawer_box'),
+    rightSideBar = document.querySelector('.sidebar'),
+    viewport = document.querySelector('body');
+
+  function scrollAnimation(currentY, targetY) {
+
+    let needScrollTop = targetY - currentY
+    let _currentY = currentY
+    setTimeout(() => {
+      const dist = Math.ceil(needScrollTop / 10)
+      _currentY += dist
+      window.scrollTo(_currentY, currentY)
+      if (needScrollTop > 10 || needScrollTop < -10) {
+        scrollAnimation(_currentY, targetY)
+      } else {
+        window.scrollTo(_currentY, targetY)
+      }
+    }, 1)
+  }
+
+  back2Top.addEventListener("click", function (e) {
+    scrollAnimation(document.scrollingElement.scrollTop, 0);
+    e.stopPropagation();
+    return false;
+  });
+
+  window.addEventListener('scroll', function (e) {
+    let percent = document.scrollingElement.scrollTop / (document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight) * 100;
+    if (percent > 1 && !back2Top.classList.contains('back-top-active')) {
+      back2Top.classList.add('back-top-active');
+    }
+    if (percent == 0) {
+      back2Top.classList.remove('back-top-active');
+    }
+    if (back2TopText) {
+      back2TopText.textContent = Math.floor(percent);
+    }
+  });
+
+
+  let hasCacu = false;
+  window.onresize = function () {
+    calcuHeight();
+  }
+
+  function calcuHeight() {
+    // 动态调整站点概览高度
+    if (!hasCacu && back2Top.classList.contains('pisces') || back2Top.classList.contains('gemini')) {
+      let sideBar = document.querySelector('.sidebar');
+      let navUl = document.querySelector('#site_nav');
+      sideBar.style = 'margin-top:' + (navUl.offsetHeight + navUl.offsetTop + 15) + 'px;';
+      hasCacu = true;
+    }
+  }
+  calcuHeight();
+
+  let open = false, MOTION_TIME = 300, RIGHT_MOVE_DIS = '320px';
+
+  if (drawerBox) {
+    let rightMotions = document.querySelectorAll('.right-motion');
+    let right = drawerBox.classList.contains('right');
+
+    let transitionDir = right ? "transition.slideRightIn" : "transition.slideLeftIn";
+
+    let openProp, closeProp;
+    if (right) {
+      openProp = {
+        paddingRight: RIGHT_MOVE_DIS
+      };
+      closeProp = {
+        paddingRight: '0px'
+      };
+    } else {
+      openProp = {
+        paddingLeft: RIGHT_MOVE_DIS
+      };
+      closeProp = {
+        paddingLeft: '0px'
+      };
+    }
+
+    drawerBox.onclick = function () {
+      open = !open;
+      window.Velocity(rightSideBar, 'stop');
+      window.Velocity(viewport, 'stop');
+      window.Velocity(rightMotions, 'stop');
+      if (open) {
+        window.Velocity(rightSideBar, {
+          width: RIGHT_MOVE_DIS
+        }, {
+          duration: MOTION_TIME,
+          begin: function () {
+            window.Velocity(rightMotions, transitionDir, {});
+          }
+        })
+        window.Velocity(viewport, openProp, {
+          duration: MOTION_TIME
+        });
+      } else {
+        window.Velocity(rightSideBar, {
+          width: '0px'
+        }, {
+          duration: MOTION_TIME,
+          begin: function () {
+            window.Velocity(rightMotions, {
+              opacity: 0
+            });
+          }
+        })
+        window.Velocity(viewport, closeProp, {
+          duration: MOTION_TIME
+        });
+      }
+      for (let i = 0; i < drawerBox.children.length; i++) {
+        drawerBox.children[i].classList.toggle('muse-line');
+      }
+      drawerBox.classList.toggle(sideBarOpen);
+    }
+  }
+
+  // 链接跳转
+  let newWindow = 'false'
+  if (newWindow === 'true') {
+    let links = document.querySelectorAll('.post-body a')
+    links.forEach(item => {
+      if (!item.classList.contains('btn')) {
+        item.setAttribute("target", "_blank");
+      }
+    })
+  }
+
+  let faSearch = document.querySelector('#fa_search');
+  faSearch.addEventListener('click', function () {
+    document.querySelector('#search_mask').style = ''
+  })
+
+  // 代码高亮
+  hljs.initHighlightingOnLoad();
+  
+  // 离开当前页title变化
+  var leaveTitle = "See You~";
+  if (leaveTitle) {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState == 'hidden') {
+        normal_title = document.title;
+        document.title = leaveTitle;
+      } else {
+        document.title = normal_title;
+      }
+    });
+  }
+
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script>
+  let images = document.querySelectorAll('.section img');
+  console.log(images);
+  images.forEach(image => {
+    var parent = image.parentElement;
+    var next = image.nextElementSibling;
+    parent.removeChild(image);
+    var aelem = document.createElement('a');
+    aelem.href = image.src;
+    aelem.dataset['fancybox'] = 'images';
+    aelem.dataset['rel'] = 'fancybox-button';
+    aelem.classList.add('fancybox');
+    aelem.appendChild(image);
+    parent.insertBefore(aelem, next);
+  })
+</script>
+    <div class="reward-mask" style="display: none;">
+  <div class="reward-relative">
+    <span class="close" aria-hidden="true">x</span>
+    <div class="reward-body">
+      <h2>感谢您的支持，我会继续努力的!</h2>
+      <div class="reward-img-box">
+        <div style="position: relative; width: 140px; height: 140px;">
+          
+          
+          
+        </div>
+      </div>
+      <p class="reward-word">扫码打赏，你说多少就多少</p>
+      <p class="reward-tip">打开微信扫一扫，即可进行扫码打赏哦</p>
+    </div>
+    <div class="bottom">
+      
+      
+    </div>
+  </div>
+</div>
+<style>
+  .reward-mask {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #00000054;
+  }
+
+  .reward-relative {
+    position: relative;
+    width: 480px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 5px;
+    background-color: #fff;
+    top: 50%;
+    margin-top: -205px;
+  }
+
+  .reward-relative .close {
+    position: absolute;
+    right: 10px;
+    font-weight: normal;
+    font-size: 16px;
+    color: #929292;
+  }
+
+  .reward-body {
+    padding: 40px 20px 20px;
+  }
+
+  .bottom {
+    display: flex;
+  }
+
+  .reward-btn {
+    text-align: center;
+  }
+
+  .reward-btn-text {
+    display: inline-block;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 50%;
+    background-color: #ff9734;
+    color: #FFF;
+    margin-top: 20px;
+  }
+
+  .pay-text {
+    margin-top: 10px;
+    padding: 10px;
+    flex: 1;
+    transition: all .2s linear;
+  }
+
+  .pay-text:hover {
+    background-color: #a5a5a536;
+  }
+
+  .reward-body h2 {
+    padding-top: 10px;
+    text-align: center;
+    color: #a3a3a3;
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0 0 20px;
+  }
+
+  .reward-body h2:after,
+  .reward-body h2:before {
+    font-family: Arial, Helvetica, sans-serif;
+    background: 0 0;
+    width: 0;
+    height: 0;
+    font-style: normal;
+    color: #eee;
+    font-size: 80px;
+    position: absolute;
+    top: 20px;
+  }
+
+  .reward-body h2:before {
+    content: '\201c';
+    left: 50px;
+  }
+
+  .reward-body h2:after {
+    content: '\201d';
+    right: 80px;
+  }
+
+  .reward-img-box {
+    display: inline-block;
+    padding: 10px;
+    border: 6px solid #ea5f00;
+    margin: 0 auto;
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .reward-img {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 767px) {
+    .reward-relative {
+      height: 100%;
+      top: 0px;
+      margin-top: 0;
+      width: auto;
+    }
+
+    .reward-relative .bottom {
+      flex-direction: column;
+    }
+
+    .reward-relative .pay-text {
+      width: 80%;
+      margin: 5px auto;
+      border: 1px solid silver;
+      padding: 6px;
+      border-radius: 4px;
+    }
+
+    .reward-body h2:after {
+      right: 40px;
+    }
+
+    .reward-body h2:after,
+    .reward-body h2:before {
+      font-size: 60px;
+    }
+
+    .reward-body h2:before {
+      left: 20px;
+    }
+  }
+</style>
+<script>
+  !function () {
+    var mask = document.querySelector('.reward-mask');
+    let close = document.querySelector('.reward-relative .close');
+    let rewardBtn = document.querySelector('.reward-btn');
+
+    let zfb = document.querySelector('#zfb'),
+      wx = document.querySelector('#wx'),
+      zfbBtn = document.querySelector('#zfbBtn'),
+      wxBtn = document.querySelector('#wxBtn');
+
+    if (zfbBtn && wxBtn) {
+      zfbBtn.addEventListener('click', () => {
+        window.Velocity(zfb, 'transition.slideLeftIn', {
+          duration: 400
+        });
+        window.Velocity(wx, 'transition.slideRightOut', {
+          display: 'none',
+          duration: 400
+        });
+      });
+
+      wxBtn.addEventListener('click', () => {
+        window.Velocity(wx, 'transition.slideRightIn', {
+          duration: 400
+        });
+        window.Velocity(zfb, 'transition.slideLeftOut', {
+          display: 'none',
+          duration: 400
+        });
+      });
+    }
+
+    rewardBtn.addEventListener('click', (e) => {
+      window.Velocity(mask, 'transition.slideDownIn', {
+        duration: 400
+      })
+    });
+
+    close.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.Velocity(mask, 'transition.slideUpOut', {
+        duration: 400
+      })
+    })
+  }()
+</script>
+
+  </div>
+</body>
+
+<div class="search-mask" id="search_mask" style="display: none;">
+  <div class="search-box">
+    <div class="search-title">
+      <i class="fa fa-search"></i>
+      <div class="input-box">
+        <input id="search" type="text" class="language" data-lan="search" placeholder="搜索">
+      </div>
+      <i id="close" class="fa fa-times-circle"></i>
+    </div>
+    <div class="stat-box">
+      <span id="stat_count">0</span><span class="language" data-lan="stat">条相关条目，使用了</span><span id="stat_times">0</span><span class="language" data-lan="stat-time">毫秒</span>
+      <hr>
+    </div>
+    <div class="result" id="result">
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/TgewbzjGs/"" data-c="
+          &lt;p&gt;*在RFID硬件里，最常见的就是PN532, Proxmark3, ACR122u三种了，在管理Java Card的时候，通常使用的是acr122u，pcsc和gp一般会直接认出, 但因其价格较贵所以经常劝退，实际上ACR122u的主控是PN533,那么名字差不多的PN532是否可以呢，请看下文 *&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;实际上，PN532从各种角度来看，他和PN533差不多是一种芯片，只不过区别在于，PN533是走USB，而PN532走的是SPI/UART，网上卖的PN532读卡器实际里面还塞了个串口转USB的芯片，只有这样，PN532才能正常使用。以下是&lt;a href=&#34;https://nfc-tools.github.io/resources/chips/pn53x/&#34;&gt;nfc-tools&lt;/a&gt;项目网站对于PN53x系列的概括:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PN531 - ISO14443-A, MIFARE, FeliCa RF, UART, SPI, I2C, USB 2.0 Historically the first and not supported by NXP anymore&lt;br&gt;
+PN532 - ISO14443-A/B, MIFARE, FeliCa RF, UART, SPI, I2C, low-battery mode&lt;br&gt;
+PN533 - ISO14443-A/B, MIFARE, FeliCa RF, UART, USB 2.0&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;我们了解到了PN532和PN533的差异和一致性，那么使用肯定也是有差别的，PN533可以直接被GP和PCSC识别，但是PN532不行，那么这里就有一种办法可以让PCSC和GP识别PN532, 他就是 &lt;strong&gt;ifdnfc&lt;/strong&gt;&lt;br&gt;
+&lt;em&gt;ifdnfc&lt;/em&gt;是一个为所有&lt;em&gt;libnfc&lt;/em&gt;支持的设备提供PC/SC支持的项目，我们需要借助他来达到目的&lt;br&gt;
+他的仓库是：https://github.com/nfc-tools/ifdnfc&lt;br&gt;
+他的说明文件是：https://github.com/nfc-tools/ifdnfc/blob/master/README&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;前置准备以opensuse为例&#34;&gt;前置准备(以openSUSE为例)&lt;/h1&gt;
+&lt;h3 id=&#34;安装编译需要的环境&#34;&gt;&lt;em&gt;安装编译需要的环境&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;zypper in autoconf automake libtool pcsc-lite-devel libnfc-devel
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;clone项目并且编译&#34;&gt;&lt;em&gt;clone项目并且编译&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;   git clone https://github.com/nfc-tools/ifdnfc
+   cd ifdnfc
+   autoreconf -vis
+   ./configure
+   make
+   sudo make install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这样就准备好了&lt;/p&gt;
+&lt;h1 id=&#34;配置libnfc&#34;&gt;配置libnfc&lt;/h1&gt;
+&lt;h3 id=&#34;通过dmesg查看当前连接的pn532端口号例如ttyusb0&#34;&gt;&lt;em&gt;通过dmesg查看当前连接的pn532端口号(例如ttyUSB0)&lt;/em&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;编辑-etcnfclibnfcconf&#34;&gt;&lt;em&gt;编辑 &lt;code&gt;/etc/nfc/libnfc.conf&lt;/code&gt;&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;vi /etc/nfc/libnfc.conf
+##粘贴如下配置
+# Allow device auto-detection (default: true)
+
+# Note: if this auto-detection is disabled, user has to set manually a device
+
+# configuration using file or environment variable
+
+allow_autoscan = true
+
+# Allow intrusive auto-detection (default: false)
+
+# Warning: intrusive auto-detection can seriously disturb other devices
+
+# This option is not recommended, user should prefer to add manually his device.
+
+allow_intrusive_scan = false
+
+# Set log level (default: error)
+
+# Valid log levels are (in order of verbosity): 0 (none), 1 (error), 2 (info), 3 (debug)
+
+# Note: if you compiled with --enable-debug option, the default log level is &amp;quot;debug&amp;quot;
+
+log_level = 1
+
+# Manually set default device (no default)
+
+# To set a default device, you must set both name and connstring for your device
+
+# Note: if autoscan is enabled, default device will be the first device available in device list.
+
+device.name = &amp;quot;IFD-NFC&amp;quot;
+##如果你使用的是USB转串口连接的PN532, 写这条，后面对应修改你的设备路径
+device.connstring = &amp;quot;pn532_uart:/dev/ttyUSB0&amp;quot;
+##如果你使用的是SPI连接的PN532, 写这条，后面对应修改你的设备路径
+device.connstring = &amp;quot;pn532_i2c:/dev/i2c-1&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;保存然后输入nfc-scan-device测试出现如下就说明配置成功了&#34;&gt;&lt;em&gt;保存，然后输入&lt;code&gt;nfc-scan-device&lt;/code&gt;测试，出现如下就说明配置成功了&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;nfc-scan-device uses libnfc 1.8.0
+1 NFC device(s) found:
+- IFD-NFC:
+    pn532_uart:/dev/ttyUSB0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;配置ifdnfc&#34;&gt;配置ifdnfc&lt;/h1&gt;
+&lt;h3 id=&#34;首先整一个配置文件&#34;&gt;&lt;em&gt;首先整一个配置文件&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;vi /etc/reader.conf.d/reader.conf&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;然后输入如下参数&#34;&gt;&lt;em&gt;然后输入如下参数&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;#设备名称
+FRIENDLYNAME      &amp;quot;IFD-NFC&amp;quot;  
+#运行库路径
+LIBPATH           /usr/local/lib64/libifdnfc.so
+#设备路径
+DEVICENAME        /dev/ttyUSB0
+#频道id, 根据你的设备路径最后的数字确定
+CHANNELID         0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;然后就可以测试了&#34;&gt;&lt;strong&gt;然后就可以测试了！&lt;/strong&gt;&lt;/h3&gt;
+&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
+&lt;h3 id=&#34;启动pcscd&#34;&gt;&lt;em&gt;启动pcscd&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;sudo pcscd&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;然后在另外一个终端窗口里激活ifdnfc&#34;&gt;&lt;em&gt;然后在另外一个终端窗口里，激活ifdnfc&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;ifdnfc-activate&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;如果一切正常你会看到&#34;&gt;&lt;em&gt;如果一切正常，你会看到：&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Activating ifdnfc with &amp;quot;pn532_uart:/dev/ttyUSB0&amp;quot;...
+IFD-NFC is inactive.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;然后你的读卡器的灯会有规律的闪烁&#34;&gt;&lt;em&gt;然后你的读卡器的灯会有规律的闪烁&lt;/em&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;启动pcsc&#34;&gt;&lt;em&gt;启动pcsc&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;pcsc_scan&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;如果一切正常应该显示如下-并且放上卡片会有进一步的消息那么就基本大功告成了&#34;&gt;&lt;em&gt;如果一切正常，应该显示如下, 并且放上卡片会有进一步的消息，那么就基本大功告成了！&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;  Using reader plug&#39;n play mechanism
+  Scanning present readers...
+  0: IFD-NFC 00 00
+ 
+  Sun Mar  7 03:11:38 2021
+   Reader 0: IFD-NFC 00 00
+    Event number: 64
+    Card state: Card removed,
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;如果使用完毕了那么请务必先执行ifdnfc-activate-no显示如下后再拔掉设备&#34;&gt;&lt;em&gt;如果使用完毕了，那么请务必先执行&lt;code&gt;ifdnfc-activate no&lt;/code&gt;，显示如下后再拔掉设备&lt;/em&gt;&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;  IFD-NFC is inactive.
+&lt;/code&gt;&lt;/pre&gt;
+">使用PCSC/GlobalPlatformPro链接PN532管理卡片</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/fLDGD7mtj/"" data-c="
+          &lt;p&gt;&lt;em&gt;本文已增至openSUSE中文维基，欢迎修改，欢迎为WIKI贡献&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;#OBS-service-tar_scm&lt;br&gt;
+协助用户将来自SCM（源代码管理）存储库的源代码打包到tarball中&lt;/p&gt;
+&lt;p&gt;##scm（必需）&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify SCM to use.&lt;br&gt;
+指定所使用的软件管理方式，若仅下载压缩包则不需要&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;scm&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;scm&amp;quot;&amp;gt;svn&amp;lt;/param&amp;gt;  
+&amp;lt;param name=&amp;quot;scm&amp;quot;&amp;gt;git&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;scm&amp;quot;&amp;gt;hz&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;scm&amp;quot;&amp;gt;bzr&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##url（必需）&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify URL to checkout.&lt;br&gt;
+指定需要checkout的仓库地址&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;http://&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;https://&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;ftp://&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;ftps:///param&amp;gt;
+&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;git://&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;url&amp;quot;&amp;gt;ssh://&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##user&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify the username to be used for authentication to the repository.&lt;br&gt;
+指定用于仓库鉴权的用户&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;user&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;user&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##keyring-passphrase&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify the passphrase to decrypt credentials from the python keyring.&lt;br&gt;
+指定从python keyring解密证书的密码&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;keyring-passphrase&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;使用方法：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;若要存储您的证书，请使用如下命令
+sudo chown obsservicerun:obsrun /etc/obs/services/tar_scm.d
+sudo -H -u obsservicerun XDG_DATA_HOME=/etc/obs/services/tar_scm.d keyring -b keyrings.alt.file.EncryptedKeyring set URL USERNAME
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;仅支持如下几种SCM与协议的组合&lt;br&gt;
+- git: ftp(s),http(s)&lt;br&gt;
+- svn&lt;br&gt;
+- bzr: bzr,ftp,http(s)&lt;br&gt;
+- hg: http(s)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;##subdir&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Package just a subdirectory&lt;br&gt;
+仅打包一个子目录&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;subdir&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;subdir&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##version&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify version to be used in tarball.  Defaults to automatically detected value formatted by versionformat parameter (_auto_).&lt;br&gt;
+Use _none_ to disable version rewriting and use what is defined in the spec or debian/changelog.&lt;br&gt;
+指定用于tar包的版本号，默认为自动检测且根据versionfomart参数格式化的值(_auto_)&lt;br&gt;
+使用 _none_ 来禁用版本覆写，并且使用spec中或者 debian/changelog文件中定义的版本&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;version&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;version&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;version&amp;quot;&amp;gt;\_auto\_&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;version&amp;quot;&amp;gt;\_none\_&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##versionformat&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Auto-generate version from checked out source using this format string.  This parameter is used if the &#39;version&#39; parameter is not specified.&lt;br&gt;
+当 ‘version’ 参数未定义时，根据格式字符从checkout的源中自动生成版本号&lt;br&gt;
+For git, the value is passed to git log --date=short --pretty=format:...&lt;br&gt;
+对于Git, 此处的值会传递至 git log --date=short --pretty=format&lt;br&gt;
+for the topmost commit, and the output from git is cleaned up to remove some unhelpful characters.  Here are some useful examples of strings which are expanded, see the git-log documentation for more.&lt;br&gt;
+对于最新的commit,git将被清除一些无用的输出，这里提供了一些可能有用的可扩展的例子，更多详情请参考git-log文档&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;%ct&amp;lt;/param&amp;gt;  
+  UNIX时间戳格式的提交时间  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;%at&amp;lt;/param&amp;gt;
+  UNIX时间戳格式的著作时间  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;%cd&amp;lt;/param&amp;gt;
+  以 &#39;年月日&#39; 为格式的提交日期  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;%ad&amp;lt;/param&amp;gt;
+  以 &#39;年月日&#39; 为格式的著作日期  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;%h&amp;lt;/param&amp;gt;
+  短hash格式  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;@PARENT_TAG@&amp;lt;/param&amp;gt;
+  获取到的第一个tag  
+&amp;lt;param name=&amp;quot;versionformat&amp;quot;&amp;gt;@TAG_OFFSET@&amp;lt;/param&amp;gt;
+  @PARENT_TAG@指定的tag的提交次数  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For hg, the value is passed to hg log --template=....  See the hg documentation for more information.  The default is &#39;{rev}&#39;&lt;br&gt;
+对hg而言，参数的值会传递到 hg log --template=.... 请参考hg的文档以获取更多信息，默认值为 &#39;{rev}&#39;&lt;br&gt;
+For bzr and svn, &#39;%r&#39; is expanded to the revision, and is the default.&lt;br&gt;
+对于bzr和svn, ‘%r’ 扩大到了修订版，并且是默认值&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;##versionrewrite-pattern&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Regex used to rewrite the version which is applied post versionformat. For example, to remove a tag prefix of &amp;quot;v&amp;quot; the regex &amp;quot;v(.&lt;em&gt;)&amp;quot; could be used.&lt;br&gt;
+当versionformat被应用后，正则表达式用来重写应用后的版本，例如，去除tag前缀中的 “v” 可以使用正则式 “v(.&lt;/em&gt;)”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionrewrite-pattern&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionrewrite-pattern&amp;quot;&amp;gt;REGEX&amp;lt;/param&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##versionrewrite-replacement&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Replacement applied to rewrite pattern. Typically backreferences are useful and as such defaults to \1.&lt;br&gt;
+将重写的部分进行替换，通常反向引用较为有用，默认为\1&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionrewrite-replacement&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionrewrite-replacement&amp;quot;&amp;gt;REGEX&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##versionprefix&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify a base version as prefix.&lt;br&gt;
+定义一个起始版本作为前缀&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionprefix&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;versionprefix&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##match-tag&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;With this parameter you can specifiy a glob pattern (e.g. v*) to filter relevant tags in your project e.g. if you use @PARENT_TAG@.&lt;br&gt;
+使用此参数定义一个通配模式（例如v*）来过滤你项目中相关的项目（比如您使用了 @PARENT_TAG@）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;match-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;match-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##parent-tag&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This parameter allows overriding the tag that is being used for computing @TAG_OFFSET@&lt;br&gt;
+此参数允许覆盖用于计算 @TAG_OFFSET@ 的标签&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;parent-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;parent-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##revision&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify revision of source to check out.&lt;br&gt;
+定义checkout的源的版本&lt;br&gt;
+When using git, revision may refer to any of the following:&lt;br&gt;
+当使用git的时候，revision可以引用如下的几种：&lt;br&gt;
+explicit SHA1(显式SHA1): a1b2c3d4....&lt;br&gt;
+- the SHA1 must be reachable from a default clone/fetch (generally, must be reachable from some branch or tag on the remote).&lt;br&gt;
+SHA1必须可以通过默认的clone/fetch访问。（通常来说，必须可从一些远程的分支或者tag上访问）&lt;br&gt;
+- set by: git checkout ${SHA1}&lt;br&gt;
+short branch name（短分支名）: &amp;quot;master&amp;quot;, &amp;quot;devel&amp;quot; etc.&lt;br&gt;
+- set by: git checkout ${branch}, git pull&lt;br&gt;
+explicit ref（显式引用）: refs/heads/master, refs/tags/v1.2.3, refs/changes/49/11249/1&lt;br&gt;
+- set by: git fetch ${url} &lt;span class=&#34;katex&#34;&gt;&lt;span class=&#34;katex-mathml&#34;&gt;&lt;math&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mrow&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;mi&gt;v&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;s&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mrow&gt;&lt;mo&gt;:&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&#34;application/x-tex&#34;&gt;{revision}:&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;&lt;span class=&#34;katex-html&#34; aria-hidden=&#34;true&#34;&gt;&lt;span class=&#34;base&#34;&gt;&lt;span class=&#34;strut&#34; style=&#34;height:0.65952em;vertical-align:0em;&#34;&gt;&lt;/span&gt;&lt;span class=&#34;mord&#34;&gt;&lt;span class=&#34;mord mathdefault&#34; style=&#34;margin-right:0.02778em;&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;e&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34; style=&#34;margin-right:0.03588em;&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;mord mathdefault&#34;&gt;n&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;mspace&#34; style=&#34;margin-right:0.2777777777777778em;&#34;&gt;&lt;/span&gt;&lt;span class=&#34;mrel&#34;&gt;:&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;{revision}， git checkout ${revision}&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;revision&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;revision&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##filename&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify name of package, which is used together with version to determine tarball name.&lt;br&gt;
+指定包名，并且与 ‘version’ 一起用于确定tar包名称&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;filename&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;filename&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##extension&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify suffix name of package, which is used together with filename to determine tarball name.&lt;br&gt;
+指定包的后缀名，用于与 ‘filename’ 一起确定tar包名称&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;extension&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;extension&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##exclude&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify glob pattern to exclude when creating the tarball.&lt;br&gt;
+指定一个通配，用于在打tar包时排除文件。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;exclude&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;exclude&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##include&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify subset of files/subdirectories to pack in the tarball.&lt;br&gt;
+指定要打包在tar包中的文件/子目录的集合&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;include&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;include&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##extract&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify a file/glob to be exported directly. Useful for build descriptions like spec files which get maintained in the SCM. Can be used multiple times.&lt;br&gt;
+指定要直接导出的文件/通配。对于构建说明（例如在SCM中维护的spec文件）很有用。可以多次使用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;extract&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;extract&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##package-meta&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Package the metadata of SCM to allow the user or OBS to update after un-tar.&lt;br&gt;
+打包SCM元数据以允许用户或OBS在解压后更新&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;package-meta&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;package-meta&amp;quot;&amp;gt;yes&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##history-depth&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Obsolete parameter which will be ignored.&lt;br&gt;
+过时的参数将被忽略&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;history-depth&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;history-depth&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##submodules&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify whether to include git submodules.  Default is &#39;enable&#39;.&lt;br&gt;
+指定是否包括Git子模块，默认为启用&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;submodules&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;submodules&amp;quot;&amp;gt;enable&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;submodules&amp;quot;&amp;gt;master&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;submodules&amp;quot;&amp;gt;disable&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##lfs (OBS_ONLY)&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify whether to include git-lfs blobs.  Default is &#39;disable&#39;.&lt;br&gt;
+指定是否包括git-lfs二进制扩展，默认为禁用&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;lfs&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;lfs&amp;quot;&amp;gt;enable&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;lfs&amp;quot;&amp;gt;disable&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##sslverify&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify Whether or not to check server certificate against installed CAs.  Default is &#39;enable&#39;.&lt;br&gt;
+指定是否根据已安装的CA检查服务器证书，默认为启用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;sslverify&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;sslverify&amp;quot;&amp;gt;enable&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;sslverify&amp;quot;&amp;gt;disable&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##changesgenerate&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify whether to generate changes file entries from SCM commit log since a given parent revision (see changesrevision).  Default is &#39;disable&#39;.&lt;br&gt;
+指定自给定的基础修订版以来，是否从SCM提交日志生成更改文件条目（请参阅changesrevision）。 默认为禁用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;changesgenerate&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;changesgenerate&amp;quot;&amp;gt;enable&amp;lt;/param&amp;gt;
+&amp;lt;param name=&amp;quot;changesgenerate&amp;quot;&amp;gt;disable&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##changesauthor&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Specify author of the changes file entry to be written.  Defaults to first email entry in ~/.oscrc, or &amp;quot;obs-service-tar-scm@invalid&amp;quot; if there is no .oscrc found.&lt;br&gt;
+指定要写入更新日志的作者。默认为 ~/.oscrc的第一条电子邮件，如果没有.oscrc文件则默认为 &#39;obs-service-tar-scm@invalid&#39;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;changesauthor&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;changesauthor&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##locale&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;DEPRECATED - Please use &amp;quot;encoding&amp;quot; instead. Set locale while execution of service&lt;br&gt;
+已废弃，请使用 &amp;quot;encoding&amp;quot;参数替代，设定服务执行时的地区。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;locale&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;locale&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##encoding&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Set encoding while execution of service&lt;br&gt;
+设定执行服务时的编码&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;encoding&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;encoding&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##latest-signed-commit&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Use the latest signed commit on a branch&lt;br&gt;
+使用分支上最新的已签名的commit&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;latest-signed-commit&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;latest-signed-commit&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##latest-signed-tag&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Use the latest signed tag on a branch、&lt;br&gt;
+使用分支上最新的已签名的tag&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;latest-signed-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;latest-signed-tag&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;##maintainers-asc&lt;br&gt;
+描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;File which contains maintainers pubkeys (only used with &#39;--latest-signed-&lt;em&gt;&#39;)&lt;br&gt;
+含有维护者公钥的文件（仅搭配&#39;--latest-signed-&lt;/em&gt;&#39;使用）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;格式：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;maintainers-asc&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;允许的值：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;param name=&amp;quot;maintainers-asc&amp;quot;&amp;gt;VALUE&amp;lt;/param&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+">OBS中tar_scm服务参数粗解</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/Y-bcuCP2H/"" data-c="
+          &lt;p&gt;&lt;em&gt;小米这个遥控器，用起来的确还行，但是为了配合mpv,还是得稍微动一下&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li&gt;首先安装 evtest ,然后执行&lt;br&gt;
+&lt;code&gt;sudo evtest&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;2.在列表中找到需要修改的键盘&lt;/p&gt;
+&lt;p&gt;记录设备相关信息，如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Input device ID: bus 0x5 vendor 0x2717 product 0x3200 version 0x110  
+Input device name: &amp;quot;XiaoMi RC&amp;quot; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;测试需要修改的按键，获得类似如下信息; 第一行的value指 SCAN_CODE，第二行value指触发状态（1按下0起来）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;Event: time 1606598332.311370, type 4 (EV_MSC), code 4 (MSC_SCAN), value 70028  
+Event: time 1606598332.311370, type 1 (EV_KEY), code 57 (KEY_SPACE), value 1  
+Event: time 1606598332.311370, -------------- SYN_REPORT ------------  
+Event: time 1606598332.551757, type 4 (EV_MSC), code 4 (MSC_SCAN), value 70028  
+Event: time 1606598332.551757, type 1 (EV_KEY), code 57 (KEY_SPACE), value 0 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;创建规则文件，路径为&#39;/etc/udev/hwdb.d/&#39; 或者 &#39;/usr/lib/udev/hwdb.d&#39;, 创建&#39;90-设备名.hwdb&#39;文件&lt;br&gt;
+编辑规则文件，如下&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;evdev:input:b0005v2717p3200*     #精确匹配设备，b后是BusID，v后是vendorID，p后是productID 
+KEYBOARD_KEY_70028=space         #将SCAN_CODE为70028的按键映射为space  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;a href=&#34;https://hal.freedesktop.org/quirk/quirk-keymap-list.txt&#34;&gt;按键代码keymap-list&lt;/a&gt;&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;保存，输入以下命令生效&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;sudo udevadm hwdb --update 
+sudo udevadm trigger
+&lt;/code&gt;&lt;/pre&gt;
+">从系统底层修改USB设备按键映射 </a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/IwJvAaVkX/"" data-c="
+          &lt;p&gt;&lt;em&gt;看视频太累？腰疼？来个遥控器是个好主意&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;在KDE中直接搜索链接小米蓝牙遥控器会报“链接失败”&lt;br&gt;
+dmesg中会显示&lt;br&gt;
+&lt;code&gt;Bluetooth: hci0: unexpected SMP command 0x0b from f4:b8:5e:ab:f9: ec&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;此时，进行如下操作 :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[bluetoothctl]# power on 
+ 
+[bluetoothctl]# agent on 
+ 
+[bluetoothctl]# default-agent 
+ 
+[bluetoothctl]# discoverable on 
+
+[bluetoothctl]# scan on 
+ 
+[bluetoothctl]# trust &amp;lt;MAC address&amp;gt; 
+
+[bluetoothctl]# pair &amp;lt;MAC address&amp;gt; 
+ 
+[bluetoothctl]# trust &amp;lt;MAC address&amp;gt; 
+ 
+[bluetoothctl]# connect &amp;lt;MAC address&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;成功后即可使用&lt;/p&gt;
+">openSUSE 链接小米蓝牙遥控器 </a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/-rigVMKXY/"" data-c="
+          &lt;p&gt;&lt;em&gt;在 Linux 内核版本 2.2 开始，Linux 将一系列的超级管理员权限细分成了一个个可以单独开启关闭的单元，以提供更细粒度的权限控制，这些单元，就被称之为 capabilities。详细的 capabilities 列表可以参考 &lt;a href=&#34;https://linux.die.net/man/7/capabilities&#34;&gt;Man Page Capabilities(7)&lt;/a&gt;。&lt;/em&gt;&lt;br&gt;
+&lt;em&gt;部分内容引用自&lt;a href=&#34;https://www.boris1993.com/linux/allow-non-root-process-to-bind-low-numbered-ports.html#ref_1&#34;&gt;Code Life&lt;/a&gt;, 谢谢！&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;CAP_NET_BIND_SERVICE&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;拥有这个 capability 的程序，就可以绑定端口号在 1024 以下的特权端口。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;setcap&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;那么，该如何控制每个 capability 呢？答案就是 &lt;code&gt;setcap&lt;/code&gt; 命令。上文所提到的命令，就是给指定的这个二进制程序增加 CAP_NET_BIND_SERVICE 这个 capability。&lt;/p&gt;
+&lt;p&gt;在 capability 名后面，用加号相连接的，则是开启这个 capability 的模式。模式有如下三种：&lt;/p&gt;
+&lt;p&gt;e: Effective，意为这个 capability 是启用的。&lt;/p&gt;
+&lt;p&gt;p: Permitted，意为这个 capability 是允许被使用的。&lt;/p&gt;
+&lt;p&gt;i: inherited，意为这个 capability 可以被其子进程继承。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;setcap&lt;/code&gt; 命令中，使用加号来开启这个模式，或者使用减号来关闭这个模式。&lt;/p&gt;
+&lt;p&gt;Eg: &lt;code&gt;sudo setcap &#39;cap_net_bind_service=+ep&#39; /usr/local/bin/caddy&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;有什么副作用&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这个方法确实有一些副作用，或者说是限制：&lt;br&gt;
+这个方法对脚本无效。如果要使某个脚本拥有这个能力，则需要为其解释器赋予这个能力，而这明显是一个巨大的安全隐患。&lt;br&gt;
+Linux 会为使用了 setcap 或 suid 的程序禁用掉 LD_LIBRARY_PATH。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Systemd&lt;/strong&gt;&lt;br&gt;
+Systemd 也支持在 service 的配置文件中指定 capabilities，其用法示例如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[Service] 
+# 该服务仅可以使用哪些capabilities 
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE 
+# 以非特权用户运行程序时需要设定此参数 
+AmbientCapabilities=CAP_NET_BIND_SERVICE 
+&lt;/code&gt;&lt;/pre&gt;
+">Linux中的Capabilities属性</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/5CmCOlubB/"" data-c="
+          &lt;p&gt;&lt;em&gt;没救了&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;背景：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在国内openSUSE的软件源通常会使用国内的镜像源，但是因为各方面的原因，国内的源可能多多少少会有一些问题。并且OBS源在国内并没有镜像，刷新下载速度十分麻烦，对zypper进行代理显得就十分必要。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/br&gt;
+&lt;p&gt;解决方案:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对GUI来说，可以使用&lt;code&gt;Yast--&amp;gt;Proxy&lt;/code&gt;进行代理配置，重启后生效。&lt;/li&gt;
+&lt;li&gt;对Terminal来说，需修改的文件位于&lt;code&gt;/etc/sysconfig/proxy&lt;/code&gt;，该文件中主要需要修改的地方有如下几处：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;##是否启用代理，状态为yes或no
+PROXY_ENABLED=&amp;quot;&amp;quot;
+
+##配置HTTP代理，格式为&amp;quot;http://x.x.x.x:xxxx&amp;quot;
+HTTP_PROXY=&amp;quot;&amp;quot;
+
+##配置HTTPS代理，格式为&amp;quot;https://x.x.x.x:xxxx&amp;quot;
+HTTPS_PROXY=&amp;quot;&amp;quot;
+
+##配置Socks代理，格式为&amp;quot;socks://x.x.x.x:xxxx&amp;quot;
+SOCKS_PROXY=&amp;quot;&amp;quot;
+
+##配置Socks5服务器，格式为&amp;quot;x.x.x.x:xxxx&amp;quot;
+SOCKS5_SERVER=&amp;quot;&amp;quot;
+
+##配置不代理的地址，ip，格式支持子域名(www.abc.de)泛域名(.abc.de)本地回环(localhost或者127.0.0.1)单个ip地址(a.b.c.d)CIDR网段(192.168.0.0/16)
+NO_PROXY=&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;配置完成后退出即可生效&lt;/p&gt;
+">openSUSE系统中对Zypper的代理</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/qk7IZE8pB/"" data-c="
+          &lt;p&gt;&lt;em&gt;没有扭曲的需求，不过扭曲的需求需要扭曲的实现&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;前情提要：&lt;br&gt;
+客户要求在一个内网windows服务器中搭建FTP服务器，FTP端口在核心上映射为1510，要求外网a.b.c.d可以正常访问FTP服务器。&lt;br&gt;
+&lt;/br&gt;&lt;/li&gt;
+&lt;li&gt;追踪问题：&lt;br&gt;
+远程链接过去，发现服务器是Win Server 2012， FTP服务器是IIS，用户创建了一个FTP用户组并且创建了一个用户，服务器防火墙开了一个1510端口。经过测试发现127.0.0.1:1510正常访问到服务器，但是外网无法连接，外网连接报错 220 227&lt;br&gt;
+&lt;/br&gt;&lt;/li&gt;
+&lt;li&gt;解决问题：&lt;br&gt;
+很简单，IIS是个傻子，他在接到PASV请求的时候返回了服务器的内网端口与地址，这样客户端进行下一步通信的时候就会连接到内网的服务器和PASV开出来的端口。&lt;/br&gt;&lt;/br&gt;IIS的被动模式端口范围可以通过修改元数据来修改，但是地址并不会返回NAT的外网地址。&lt;/br&gt;&lt;/br&gt;所以解决办法就是，用一个不这么傻的FTP服务器来完成这个操作，这里推荐FileZilla Server，在FileZilla中，有针对与PASV模式的设定，在选项页中，设定一个映射端口范围并在服务器防火墙，NAT规则中设定相应的范围。在下面的IP设定中填写你所连接的NAT后的IP，再进一步配置正常的身份验证等，这样，服务器在接收到请求后，返回的就是定义范围中的端口与公网地址了，连接就正常了。&lt;/li&gt;
+&lt;/ul&gt;
+">在NAT后的Windows服务器中搭建FTP服务器</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/EyA3rtPtE/"" data-c="
+          &lt;p&gt;&lt;em&gt;上次发了一篇帖子说了自己碰见的一个podman小问题，因为podman和docker指令的极度相似性所以学习起来也十分简单。在后续的过程中想起了与podman搭对的Buildah工具，还是想写出来交流一下在openSUSE Leap中的使用体验，本文旨在简单对比与简单介绍Buildah与其他镜像构建方式&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;说到Buildah，就不得不说一下镜像构建，镜像构建在我所用过的工具中，有3个途径，其一是用supermin构建基础镜像，其二是用docker/podman commit 魔改镜像，其三是用dockerfile打包镜像，这三种途径分别用于三种不同的情况，有其独有的特性，但是本次说到的Buildah则是后两者的继任者或者说升级版，他与podman均依赖于libcontainer-common但又不相互依赖，实为构建临时测试环境的好工具。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;这里引入一个环境，朋友A用cpp写了一个程序，程序编译过后本身可以跨平台使用，但是仍然有依赖，依赖有f,b,c.依赖在Windows系统中均为系统预安装，但是在部分Linux发行版中并未预安装，为避免程序提交后测试不通过，便有了三个方案，第一，打包一个测试环境容器；第二，打包为AppImage；第三，静态编译。在其中，因为需要跨平台，便除去了方案三，于是友人A开始琢磨打包AppImage，我则受托构建一个测试镜像。以下便开始了进程。&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;先是一个普通的构建过程&#34;&gt;先是一个普通的构建过程&lt;/h2&gt;
+&lt;p&gt;首先因为脑残没能构建成功基础镜像，手里除了openSUSE又只有一个很久没有重新认证的开发版RHEL，无法更换构建环境。遂采用Debian的镜像作为基础镜像。这里会有一个坑，就是需要先考虑目标程序的运行环境，友人A的程序是在x86_64环境下编译的，所以运行环境只能是x86_64。这是我在连续pull了几个基础镜像后才注意到的问题，在这里选择Debian的镜像，一是因为其体积小，二是因为他是x86_64环境.&lt;/p&gt;
+&lt;p&gt;pull到镜像后，先run了一下，确定了容器中是否有已安装的依赖，结果是在意料之中的，没有一个依赖被安装。确定过环境后，先整理打包一下要放进环境的文件，就开始编写Dockerfile，File如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;FROM debian:latest
+MAINTAINER PoisonBCat
+ADD files.tar.gz /root/
+RUN rm -rf /etc/apt/sources.list
+RUN mv /root/sources.list /etc/apt/
+RUN apt update
+RUN apt install -y f b c vim
+RUN chmod +x /root/example 
+RUN mv /root/example /usr/local/bin
+WORKDIR /root/
+CMD [&amp;quot;bash&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;构建完成后查看镜像列表，可以对比Debian镜像，接近300M感觉还是比较大的，增加了1倍多的空间，按照apt的输出来看，3个依赖+vim是155M左右，虽然因为依赖包的体积较大但是仍然感觉不是太理想(强迫症)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;REPOSITORY                  TAG      IMAGE ID       CREATED         SIZE
+localhost/env_test          latest   923d87ff243b   6 seconds ago   290 MB
+docker.io/library/debian    latest   e1de74e67cc7   5 days ago      106 MB
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;随后精简串联File，尽量减少镜像构建层，清除无用缓存，把vim换成vim-tiny，最后File变成了这样：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;FROM debian:latest
+MAINTAINER PoisonBCat
+ADD files.tar.gz /root/
+RUN rm -rf /etc/apt/sources.list &amp;amp;&amp;amp; mv /root/sources.list /etc/apt/ &amp;amp;&amp;amp;  apt update &amp;amp;&amp;amp; apt install -y f b c vim-tiny &amp;amp;&amp;amp; apt clean &amp;amp;&amp;amp; chmod +x /root/example &amp;amp;&amp;amp; mv /root/example /usr/local/bin
+WORKDIR /root/
+CMD [&amp;quot;bash&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;构建出来，看起来效果还不错&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;REPOSITORY                  TAG      IMAGE ID       CREATED          SIZE
+localhost/env_test          latest   4fbab8094063   10 seconds ago   257 MB
+docker.io/library/debian    latest   e1de74e67cc7   5 days ago       106 MB
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其实按道理说，构建成这样已经达成预期目的了，但是我还是不满意，debian镜像里包括了一个最小的系统环境，虽然功能完善但是有很多无用的功能，比如说tar,比如说apt,把能精简的都精简，这才是最终的目的，这样就有了下面的一通操作。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;基于supermin构建基础镜像然后再进行后期添加修改&#34;&gt;基于Supermin构建基础镜像，然后再进行后期添加修改&lt;/h2&gt;
+&lt;p&gt;先基于openSUSE Leap 15.1用supermin构建镜像，命令很简单，如下(依赖依然以f,b,c代替)：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;supermin -v --prepare f b c bash coreutil vim -o 1st.d 
+supermin --build 1st.d -f chroot -o 2nd.d
+tar --numeric-owner -cpf os_bash.tar -C 2nd.d .
+cat os_bash.tar | podman import - os_bash:1.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;结果令人无语……镜像解压状态竟然只有85.7M……(感谢suse)，这显然是最完美的基础镜像&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;REPOSITORY                  TAG      IMAGE ID       CREATED             SIZE
+docker.io/library/os_bash   1.0      1c4476ab58e9   16 minutes ago      85.7 MB
+localhost/env_test          latest   4fbab8094063   About an hour ago   257 MB
+docker.io/library/debian    latest   e1de74e67cc7   5 days ago          106 MB
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下一步就是再利用Dockerfile打包了，和刚开始的Dockerfile所差无几，只是减少了安装依赖的过程，打包后的结果如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;REPOSITORY                  TAG      IMAGE ID       CREATED             SIZE
+localhost/env_opensuse      latest   7a1e9e4013c6   4 seconds ago       92.5 MB
+docker.io/library/os_bash   1.0      1c4476ab58e9   20 minutes ago      85.7 MB
+localhost/env_test          latest   4fbab8094063   About an hour ago   257 MB
+docker.io/library/debian    latest   e1de74e67cc7   5 days ago          106 MB
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个最终版可以说是十分理想了，podman和supermin的表现仍如预期，那么Buildah的情况又如何呢&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;buildah使用dockerfile进行构建&#34;&gt;Buildah使用Dockerfile进行构建&lt;/h2&gt;
+&lt;p&gt;Buildah作为一个镜像构建工具，他并未提供对基础镜像的构建，不过其仍然支持Dockerfile构建，可以直接通过&lt;br&gt;
+&lt;code&gt;buildah bud -t TAG DIRECTORY&lt;/code&gt;&lt;br&gt;
+的命令格式进行构建，Buildah构建的优点是，他并不像docker/podman build 一样对每一条指令提交一个新的分层，而是进行一个流水化的构建，这样的构建方式明显的加快了镜像构建的速度，在构建指令较多的时候会很明显。命令与结果如下：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;buildah bud -t env_bud:latest .&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  # buildah images
+  REPOSITORY                  TAG      IMAGE ID       CREATED          SIZE
+  localhost/env_bud           latest   81e5636f66f3   15 seconds ago   283 MB
+  localhost/env_test          latest   923d87ff243b   3 hours ago      290 MB
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;构建的速度还是很快，在一条ADD指令，6条RUN指令下基本耗时只是中间的安装依赖的过程，同时还可以看出来镜像相对于用&lt;code&gt;podman build&lt;/code&gt; 构建出的镜像要小那么一 nai nai, 再查看一下这个镜像的history:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  # podman history 81e5636f66f3
+  ID             CREATED         CREATED BY                                      SIZE   
+  81e5636f66f3   3 minutes ago                                                   177.9MB   
+  e1de74e67cc7   5 days ago      /bin/sh -c #(nop) CMD [&amp;quot;bash&amp;quot;]                  177.9MB   
+  &amp;lt;missing&amp;gt;      5 days ago      /bin/sh -c #(nop) ADD file:6e8620824300ccf...    105.5MB  
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;很明显，中间没有多余的提交层，至于 &lt;code&gt;e1de74e67cc7&lt;/code&gt; 这个层，就是debian:latest构建时的CMD层了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;利用buildah的原生命令进行构建&#34;&gt;利用Buildah的原生命令进行构建&lt;/h2&gt;
+&lt;p&gt;前面说来说去，都是说Buildah对Docker/Podman的兼容性，相似的指令可以很轻松的上手这个工具，但是Buildah真正有意思的还是他的原生命令，他的原生命令可以在容器构建的时候让你与容器进行交互。具体表现就是Buildah的原生命令更像是 &lt;code&gt;buildah + dockerfile指令&lt;/code&gt; 比如最开始长的那个Dockerfile可以改写成如下的样子：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# pod=$(buildah from debian:latest) 
+# buildah config --label maintainer=&amp;quot;PoisonBCat&amp;quot; $pod
+# buildah add $pod files.tar.gz /root/
+cebaa7d791fbedb3c468321d9e7256c35b223a9c0624e768720dd3f13765bac3
+
+# buildah run $pod rm -rf /etc/apt/sources.list
+# buildah run $pod mv /root/sources.list /etc/apt/
+# buildah run apt update
+# buildah run $pod apt install -y f b c vim 
+# buildah run $pod chmod +x /root/example
+# buildah run $pod mv /root/example /usr/local/bin
+# buildah config --workingdir /root/ $pod 
+# buildah config --cmd bash $pod
+# buildah commit --format docker $pod env_cmd:latest
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在shell中你就可以以过程化的构建这个镜像，你甚至可以利用你会的任意一个语言用于构建这个属于你的镜像。这样就可以让用户自定义化的构建镜像。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;写在最后&#34;&gt;写在最后&lt;/h2&gt;
+&lt;p&gt;最后呢，我还是用Buildah+Dockerfile的方式构建出来了，最后大小仅为89.1MB，这已经超出了预期的想象，其实中间缩小镜像体积的主要原因应该还是要归功于openSUSE. 因为在构建系统镜像时，supermin认出了f,b,c三个依赖但是在接下来的安装过程中并未出现。构建完后测试也证明镜像中的确包括了这三个依赖，具体缘由也就不得而知了。实际上呢，我对Buildah的原生命令并不是很感冒，可能是因为我刚开始学Docker的时候请教过的人告诉我，commit一般作为保护现场用，而不是用于构建镜像，虽然Buildah的原生命令是同时综合了commit与Dockerfile指令，但是我还是会有一些抵触，不过刚接触Docker镜像构建的人学习这个还是很有帮助的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
+&lt;p&gt;下面这篇文章中比较详细的介绍了Buildah的用法，还有其特性(包括本文中未用到的直接挂载镜像与chroot)，十分推荐阅读&lt;br&gt;
+&lt;a href=&#34;https://linux.cn/article-9836-1.html&#34;&gt;Buildah 入门&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;本文仍然基于亲身体验，若有错误，烦请指正。&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+">使用Buildah与其他途径构建镜像</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/PJBRnd3hH/"" data-c="
+          &lt;p&gt;&lt;em&gt;&lt;strong&gt;Podman，作为docker的(升级/魔改/进阶/优化)版本，现已登陆openSUSE Leap 15.1！，不要docker-io! 不要systemctl start docker ! 下载即装即用！还再犹豫什么，赶快卸载Docker安装podman吧&lt;/strong&gt;！&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;2021.3.06更新：若按照本文后，在pull镜像结束阶段出现 &lt;code&gt;potentially insufficient UIDs or GIDs available in user namespace (requested 0:42 for /etc/shadow)&lt;/code&gt; 错误，请尝试运行 &lt;code&gt;podman system migrate&lt;/code&gt; 命令&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;s&gt;吃完安利&lt;/s&gt;  简单一说后，先描述一下我碰到的问题，首先，在执行podman命令时，给出了这样一个WARNING&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;WARN[0000] cannot find mappings for user 马赛克: No subuid ranges found for user &amp;quot;马赛克&amp;quot; in /etc/subuid 
+WARN[0000] using rootless single mapping into the namespace. This might break some images. Check /etc/subuid and /etc/subgid for adding subids
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;鉴于作为码农预备役中一员的敏感性，WARNING什么的不管他就是了，又不是跑不了，命令跑的这么稳定，我的环境怎么会有问题，但是事实却是……&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Trying to pull docker.io/library/debian:latest...Getting image source signatures
+Copying blob 6f2f362378c5 done
+Copying config e1de74e67c done
+Writing manifest to image destination
+Storing signatures
+Error: error creating container storage: error creating read-write layer with ID &amp;quot;d21e1aa53311dee39e57aeaf3ad545529989f71edbf1ec2989d5edf3675675be&amp;quot;: there might not be enough IDs available in the namespace (requested 0:65534 for /home/马赛克/.local/share/containers/storage/vfs/dir/d21e1aa53311dee39e57aeaf3ad545529989f71edbf1ec2989d5edf3675675be/etc/gshadow): lchown /home/马赛克/.local/share/containers/storage/vfs/dir/d21e1aa53311dee39e57aeaf3ad545529989f71edbf1ec2989d5edf3675675be/etc/gshadow: invalid argument
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;嗯？容器起不来？这可就是真的见鬼了，赶快切到docker下试试&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;╰─➤  docker run -it debian:latest
+Unable to find image &#39;debian:latest&#39; locally
+latest: Pulling from library/debian
+6f2f362378c5: Pull complete 
+Digest: sha256:118cf8f3557e1ea766c02f36f05f6ac3e63628427ea8965fb861be904ec35a6f
+Status: Downloaded newer image for debian:latest
+root@01ca97b541ba:/# 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;这不是很正常吗？？？&lt;/strong&gt;&lt;br&gt;
+再去root下测试一下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;╰─# podman run -it debian:latest
+root@bac474be0001:/# 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;非常正常，但是每次都要切到root很麻烦，懒啊&lt;/p&gt;
+&lt;p&gt;于是乎，在疑惑与懒惰的驱动下，我先是点开了 www.baidu.com&lt;br&gt;
+没 有 答 案（正常）&lt;br&gt;
+然后我又去了 www.google.com&lt;br&gt;
+仅有的两个github issue就像救命稻草一样出现了！&lt;br&gt;
+但是仍然有问题，issue中所提到的先是基于ubuntu的环境，最终解决办法是安装&lt;code&gt;uidmap&lt;/code&gt;这个包，这个包在openSUSE下自然是搜不到的; 另一个是在openSUSE下的问题，但是只是说利用“shadowutil”修复了，并未描述修复流程。哦豁，傻了&lt;/p&gt;
+&lt;p&gt;没办法只能返回来继续看报错，看来看去，突然发现了其中一句报错&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;there might not be enough IDs available in the namespace
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;再结合最开始的WARNING&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;WARN[0000] cannot find mappings for user 马赛克: No subuid ranges found for user &amp;quot;马赛克&amp;quot; in /etc/subuid 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;很明显，&lt;strong&gt;问题就是应该出在了/etc/subuid与/etc/subgid这两个文件中了&lt;/strong&gt;&lt;br&gt;
+那这两个文件又是什么呢，这又牵扯到了docker中关于namespace的相关了，在此对namespace仅做一简要说明&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Linux 内核实现 namespace 的主要目的就是为了实现轻量级虚拟化（容器） 服务，构建一个相对隔离的 shell 环境。在同一个 namespace 下的进程可以感知 彼此的变化，而对外界的进程一无所知。这样让容器内的进程运行在一个独立的 系统环境中，以此达到隔离的目的
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;事实上，subuid与subgid的作用，是定义一个可映射进Container的uid的range，在docker/podman中，会将subuid中定义的range中的一个映射至容器中的uid 0（root），这样映射后，容器中的root可以具有其自己的权限但是他的namespace仍然是宿主机中当前用户的namespace，也就是在宿主机中仅有当前用户的权限。&lt;/p&gt;
+&lt;p&gt;回过头来再看问题，明显的报出来是/etc/subuid中不存在一个可以映射入容器的范围，查看该文件，果然是空空如也，那么解决起来就很简单了，给他一个range即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;echo &amp;quot;当前用户名:110000:65536&amp;quot; &amp;gt; /etc/subuid
+echo &amp;quot;当前用户名:110000:65536&amp;quot; &amp;gt; /etc/subgid
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;echo的&lt;strong&gt;内容解释&lt;/strong&gt;为“&lt;strong&gt;在当前用户的namespace中有65536个子用户，子用户的ID是从110000-175535&lt;/strong&gt;”, 而这些用户ID映射进容器后就是ID为0-65535的用户，subgid和subuid意义相似，在此不在赘述。修复后，再试一下，果然问题消失了。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;╰─➤  podman run -it debian:latest                                                                                                     130 ↵
+Trying to pull docker.io/library/debian:latest...Getting image source signatures
+Copying blob 6f2f362378c5 done
+Copying config e1de74e67c done
+Writing manifest to image destination
+Storing signatures
+root@cc96213f30a2:/# 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这里想扯两句：&lt;br&gt;
+现在网络上关于podman的相关资料较少，其实大部分问题可以参考Docker的相关资料，podman实现了docker绝大多数的api（swarm除外），所以在大部分问题上docker的资料仍然具有其参考价值。&lt;/p&gt;
+&lt;p&gt;本文源自亲身经历，若有错误，还请指出。(请后面拿鸡蛋和西红柿的兄弟先坐下，谢谢)&lt;/p&gt;
+">简单解决podman在非root用户下的报错(openSUSE Tumbleweed)(2021更新))</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/BF0wQKc0Q/"" data-c="
+          &lt;p&gt;&lt;em&gt;之前一直带着酷比魔方iwork1X上课用，但是由于1X那十分神奇的需要驱动的神奇主动电容笔延迟并不理想，萌发了再找一个是电磁屏的寨板的想法（穷）。&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;后面找到了 中柏(Jumper)的EzPad6 M4这款神奇的平板，他和1X一样是Z8350+4+64，但是配备了Wacom的电磁屏，价格不过500而以，初步符合预期，遂下手购买&lt;/p&gt;
+&lt;p&gt;在等待快递的过程中，收集了一些资料，感觉Jumper略好与酷比魔方，因为其在官网提供的是驱动而非酷比魔方所提供的定制系统镜像，而且驱动透明化，将Silead触摸屏的固件也放了出来，顿时就有了好感，越发的期待这个板子的到来&lt;/p&gt;
+&lt;p&gt;终于平板到手，在卖家预装的Win10下测试了基础功能后，便下载了openSUSE_KDE_liveCD来测试，情况在预料之中，因为在Win中查看硬件发现平板的无线网卡竟然是走的SDIO，经历过很久之前的一次折腾Thinkpad 8 Tablet的网卡驱动后我对Broadcom SDIO的好感度是几乎为零，这是个很恶心的东西，果然在后续安装了闭源的Broadcom-wl后仍然无法驱动WIFI，就暂时放弃了。后续查看中发现触屏仍然是缺少SileadTouch.fw（但在win驱动里提供了），蓝牙无法正常驱动(预料之中)，声卡无法驱动(预料之中)，wacom屏正常驱动，评估了一下，觉得还是使用Windows稳妥，便重装了系统，问题就在此发生了&lt;/p&gt;
+&lt;p&gt;重装系统后，安装驱动，一切正常，但发现关机后电源指示灯兼摄像头指示灯并不会熄灭！充电完成后亦是如此。百般折腾发现问题仍然存在，其中包括重置Bios，重装并更新系统及驱动，寻找客服解决，均无法得到满意的效果，客服建议返厂检测但时间所限并不打算采纳，与朋友讨论也仅仅是怀疑ACPI部分出了问题，在其他功能正常的情况下，暂时就搁置了这个问题，转而先去配置系统并先去充电。&lt;/p&gt;
+&lt;p&gt;一觉醒来问题依旧，回忆从平板到手验收到目前的所有过程，突然想到是不是openSUSE_LiveCD的问题，因为Windows下一般配置不会对ACPI造成影响，Bios重置回默认后也应该不会有问题，自然而然就将问题引向了那个LiveCD，于是继续搜集相关信息，其中对于平板的信息是少之又少，大部分是台式机与笔记本的相关问题，考虑到笔记本平台和平板的相似性遂将关注点放在了笔记本。经过一番搜索，有一条Ubuntu论坛的早期帖子引起了我的注意。帖子中楼主表明笔记本也出现了类似的问题，楼中有人提醒道在系统中使用shutdown -P关机而不是使用poweroff关机，看到后立刻尝试，果不其然，问题成功解决&lt;/p&gt;
+&lt;p&gt;究其原因，问题还是出在了poweroff和shutdown的区别上，根据unix.stackexchange.com上一篇帖子的说法，poweroff命令是&amp;quot;systemctl poweroff&amp;quot;指令的符号链接，doc中说poweroff实际上会给ACPI一个断电的指令，但是实际中，poweroff=halt=shutdown -h,最后call的都是halt这就导致ACPI并未彻底断电，而shutdown -P是将runlevel调整至init 0而后关闭电源。指令之间的差异就造成了这一情况的出现。&lt;/p&gt;
+">记一次折腾寨板的经历</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/e7bOCe0fp/"" data-c="
+          &lt;p&gt;&lt;em&gt;开头先吐槽一下我看不懂的Caddy Doc, 是真的看不懂&lt;/em&gt;&lt;br&gt;
+&lt;em&gt;再吐槽一下Typecho的Markdown解释器，wdnmd&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;前期准备&#34;&gt;&lt;strong&gt;前期准备&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;需要一台CentOS 7系统主机 [RH7也行，你开心就好] (略)&lt;/li&gt;
+&lt;li&gt;需要一个域名(略)&lt;/li&gt;
+&lt;li&gt;安装epel源，用黄狗或者RPM：&lt;br&gt;
+&lt;code&gt;sudo yum install epel-release&lt;/code&gt;&lt;br&gt;
+或&lt;br&gt;
+&lt;code&gt;sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;安装webtatic源，由于CentOS官方源+epel源中仅提供了5.4版本的rpm，秉承着安新不安旧的原则，我选择安装7.2版本，这里就需要添加webtatic源：&lt;br&gt;
+&lt;code&gt;sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;刷新Cache&lt;br&gt;
+&lt;code&gt;sudo yum makecache&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;(可选) 安装Wget&lt;br&gt;
+&lt;code&gt;sudo yum install wget -y&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;安装阶段&#34;&gt;&lt;strong&gt;安装阶段&lt;/strong&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;首先安装Caddy&lt;br&gt;
+&lt;code&gt;sudo yum install caddy -y&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;其次安装PHP7.2&lt;br&gt;
+&lt;code&gt;sudo yum install php72w php72w-cli php72w-common php72w-devel php72w-embedded php72w-fpm php72w-gd php72w-mbstring php72w-mysqlnd php72w-opcache php72w-pdo php72w-xml -y&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;然后安装MariaDB&lt;br&gt;
+&lt;code&gt;sudo yum install mariadb mariadb-server -y&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;最后下载Typecho{这里使用Stable v1.1 (17.10.30), 我对版本没啥特殊要求}&lt;br&gt;
+&lt;code&gt;wget -O &amp;quot;typecho.tar.gz&amp;quot; http://typecho.org/downloads/1.1-17.10.30-release.tar.gz&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;配置阶段&#34;&gt;&lt;strong&gt;配置阶段&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;配置Caddy&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;配置Caddy.conf&lt;/strong&gt;&lt;br&gt;
+caddy使用所谓指令（Directives）来描述功能进行配置，所以首先配置他，简易配置见本文尾部&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;创建日志文件并修改权限&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;sudo mkdir /var/log/caddy &amp;amp;&amp;amp; touch /var/log/caddy/caddy.log&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;sudo chown caddy:caddy /var/log/caddy/caddy.log&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;配置PHP&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;sudo vi /etc/php-fpm.d/www.conf&lt;/code&gt;&lt;br&gt;
+修改如下参数&lt;br&gt;
+&lt;code&gt;user = caddy&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;group = caddy&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;listen = 127.0.0.1:9000&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;配置MariaDB&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;sudo mysql_secure_installation&lt;/code&gt;&lt;br&gt;
+根据提示设定数据库密码，初始化配置（个人配置为YNYY&lt;br&gt;
+创建typecho数据库&lt;br&gt;
+&lt;code&gt;mysql -uroot -p -se &amp;quot;create database typecho;&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;配置Typecho&lt;/strong&gt;&lt;br&gt;
+解压typecho&lt;br&gt;
+&lt;code&gt;tar -zxvf typecho.tar.gz&lt;/code&gt;&lt;br&gt;
+移动内容至Caddy目录&lt;br&gt;
+&lt;code&gt;mv build/ /usr/share/caddy/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;启动阶段&#34;&gt;&lt;strong&gt;启动阶段&lt;/strong&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;启动php-fpm并设定开机自起&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;systemctl restart php-fpm &amp;amp;&amp;amp; systemctl enable php-fpm&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;启动MariaDB并设定开机自起&lt;/strong&gt;&lt;br&gt;
+&lt;code&gt;systemctl restart mariadb &amp;amp;&amp;amp; systemctl enable mariadb&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;启动Caddy并设定开机自起&lt;br&gt;
+&lt;code&gt;systemctl restart caddy &amp;amp;&amp;amp; systemctl enable caddy&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;然后就可以进入typecho的初始化页面进行配置啦&#34;&gt;&lt;em&gt;&lt;strong&gt;然后就可以进入Typecho的初始化页面进行配置啦！&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;####PS：Caddy.conf####&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;:80  
+{  
+gzip  
+redir https://(1).(2){url}  
+}  
+(1).(2)  
+{  
+root /usr/share/caddy  
+log /var/log/caddy/caddy.log  
+tls &amp;quot;YOUR MAIL ADDR&amp;quot;  
+fastcgi / 127.0.0.1:9000 php  
+rewrite {  
+if {path} not_match ^\/admin  
+to {path} {path}/ /index.php?{query}  
+}  
+}  
+www.(2) {  
+log /var/log/caddy/caddy.log  
+tls &amp;quot;YOUR MAIL ADDR&amp;quot;  
+redir https://(1).(2){url}  
+}  
+import conf.d/*.conf 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;说明&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&#39;(1)&#39;是指A记录所解析的部分&lt;br&gt;
+&#39;(2)&#39;指域名&lt;br&gt;
+&#39;tls&#39; 为你的邮箱地址&#39;用于Let&#39;s Encrypt证书下发&lt;/p&gt;
+&lt;/blockquote&gt;
+">CentOS 7搭建 Caddy+PHP 7.2+MariaDB+Typecho</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://emf37.github.io/aefsk_xbK/"" data-c="
+          &lt;p&gt;&lt;em&gt;物尽其用，虽然没什么卵用&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在Windows 7下的GPS Enabler中开启“自动追踪（AUTO TRAKING）,拷贝 &lt;code&gt;C:\Program Files(X86)\QUALCOMM\Images&lt;/code&gt; 中的固件（amss.mbn,apps.mbn,UQCN.mbn）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在OpenSUSE下安装GCC库，安装gpsd,gpsd-devel,gpsd-clients，&lt;br&gt;
+下载&lt;a href=&#34;http://www.codon.org.uk/~mjg59/gobi_loader/download/gobi_loader-0.7.tar.gz&#34;&gt;GOBI_LOADER&lt;/a&gt;&lt;br&gt;
+将当前用户加入dialout用户组中&lt;code&gt;sudo usermod -aG dialout 用户名&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;解压gobi_loader-0.7.tar.gz，编译，将其复制到&lt;code&gt;/usr/bin/&lt;/code&gt;下，然后ln -s 把/usr/bin/中的gobi_loader连接到 &lt;code&gt;/bin/&lt;/code&gt; 目录下&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建 &lt;code&gt;/lib/firmware/gobi/&lt;/code&gt; 目录，把在Windows中提取的固件放在此目录中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;执行 &lt;code&gt;sudo /bin/gobi_loader -2000 /dev/ttyUSB0 /lib/firmware/gobi&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;然后用  &lt;code&gt;lsusb&lt;/code&gt; 确认设备信息，如图即可确认固件成功加载&lt;br&gt;
+&lt;img src=&#34;https://emf37.github.io/post-images/1615038839140.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入 sudo echo &amp;quot;$GPS_START&amp;quot; &amp;gt; /dev/ttyUSB2 启动GPS设备（输入echo &amp;quot;$GPS_STOP&amp;quot;  &amp;gt; /dev/ttyUSB2为关闭GPS设备）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;输入sudo /usr/sbin/gpsd -D5 -N -n /dev/ttyUSB2 启用GPS，出现正常数据后即可退出进程（信息中无ERR）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;复制gobi_loader-0.7文件夹中的60-gobi.rules到 /lib/udev/rules.d中，修改60-gobi.rules文件如图&lt;br&gt;
+&lt;img src=&#34;https://emf37.github.io/post-images/1615038974803.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;保存,执行 &lt;code&gt;udevadm info -q path -n /dev/ttyUSB0&lt;/code&gt; 获取顶级设备路径，然后执行 &lt;code&gt;udevadm test ‘刚才获取到的路径’&lt;/code&gt;  如果和具有下图的部分且在/dev/目录下有3个ttyUSB设备即可确定rules执行成功&lt;br&gt;
+&lt;img src=&#34;https://emf37.github.io/post-images/1615039133596.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;关机，拔掉电源+电池，按住开机键5S放电，然后开机查看/dev/下是否仍然显示3个ttyUSB设备，如果仍然存在，说明规则生效&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+">openSUSE X120e启用GOBI 2000 GPS </a>
+      </div>
+      
+    </div>
+    <div class="page">
+      <div id="page_ul"></div>
+    </div>
+  </div>
+</div>
+<script>
+  !function () {
+    let searchMask = document.querySelector('#search_mask');
+    let result = document.querySelector('#result');
+    let items = document.querySelectorAll('.item');
+    let searchBox = document.querySelector('#search');
+    let statCount = document.querySelector('#stat_count');
+    let statTimes = document.querySelector('#stat_times');
+    let pageUl = document.querySelector('#page_ul');
+    let close = document.querySelector('#close');
+    
+    close.addEventListener('click', function() {
+      searchMask.style = 'display: none;'
+    })
+
+    let finds = [];
+    let contents = [];
+    let pageSize = 10;
+    items.forEach(item => {
+      let a = item.querySelector('a');
+      contents.push({
+        title: a.innerText,
+        details: a.dataset.c,
+        link: a.href
+      })
+      item.remove();
+    })
+
+    function insertStr(soure, start, count) {
+      let newStr = soure.substr(start, count);
+      return soure.slice(0, start) + '<em>' + newStr + '</em>' + soure.slice(start + count);
+    }
+
+    pageUl.addEventListener('click', function(event) {
+      let target = event.target;
+      if (target.__proto__ === HTMLSpanElement.prototype) {
+        appendResults(parseInt(target.dataset.i));
+      }
+    })
+
+    function appendResults(index) {
+      let htmlResult = '';
+      let start = index || 0;
+      let end = Math.min(start + pageSize, finds.length);
+      for (let i = start; i < end; i++) {
+        const current = finds[i];
+        let html = current.title;
+        let sum = 0;
+        let positions = current.positions;
+        positions.forEach(position => {
+          html = insertStr(html, position.start + sum, position.count);
+          sum += 9;
+        })
+        htmlResult += `<div class="item"><a class="result-title" href="${current.link}">${html}</a></div>`;
+      }
+      result.innerHTML = htmlResult;
+      pageUl.innerHTML = '';
+      let count = finds.length / pageSize;
+      let lis = '';
+      if (start !== 0) {
+        lis += `<span class="fa fa-angle-left" data-i='${start - 1}'></span>`;
+      }
+      for (let i = 0; i < count; i++) {
+        lis += `<span class='${i === start?'current':''}' data-i='${i}'>${i+1}</span>`;     
+      }
+      if (start+1 < count) {
+        lis += `<span class="fa fa-angle-right" data-i='${start+1}'></span>`;  
+      }
+      pageUl.innerHTML = lis;
+    }
+
+    function search(delay) {
+      let timer = null
+      return function () {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          let start = Date.now();
+          let segments = searchBox.value.split(' ').filter(c => c != '');
+          if (segments.length <= 0) {
+            return;
+          }
+          finds = [];
+          let htmlResult = '';
+          contents.forEach(content => {
+            let title = content.title;
+            let positions = [];
+            let find = false;
+            segments.forEach((segment) => {
+              if (content.title.includes(segment)) {
+                find = true;
+                positions.push({
+                  start: content.title.indexOf(segment),
+                  count: segment.length
+                })
+              } else if (content.details.includes(segment)) {
+                find = true;
+              }
+            });
+            if (find) {
+              finds.push({
+                title: content.title,
+                link: content.link,
+                positions
+              });
+            }
+          })
+          appendResults(0);
+          statCount.textContent = finds.length;
+          statTimes.textContent = Date.now() - start;
+        }, delay)
+      }
+    }
+    searchBox.addEventListener('input', search(200));
+  }()
+</script>
+
+<input hidden id="copy" />
+<script>
+  !function () {
+    let times = document.querySelectorAll('.publish-time');
+    for (let i = 0; i < times.length; i++) {
+      let date = times[i].dataset.t;
+      let time = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+      if (time < 60) {
+        str = time + '秒之前';
+      } else if (time < 3600) {
+        str = Math.floor(time / 60) + '分钟之前';
+      } else if (time >= 3600 && time < 86400) {
+        str = Math.floor(time / 3600) + '小时之前';
+      } else if (time >= 86400 && time < 259200) {
+        str = Math.floor(time / 86400) + '天之前';
+      } else {
+        str = times[i].textContent;
+      }
+      times[i].textContent = str;
+    }
+  }();
+</script>
+
+<script>
+  let language = '';
+  if (language !== '') {
+    let map = new Map();
+    if (language === 'en') {
+      map.set('search', 'Search');
+      map.set('category', 'Categories');
+      map.set('article', 'Articles');
+      map.set('tag', 'Tags');
+      map.set('top', 'Top');
+      map.set('publish', 'published');
+      map.set('minute', ' minutes');
+      map.set('read-more', 'Read More');
+      map.set('view', 'View');
+      map.set('words', ' words');
+      map.set('category-in', 'category in');
+      map.set('preview', 'Meta');
+      map.set('index', 'Toc');
+      map.set('no-archives', "You haven't created yet");
+      map.set('archives', " articles in total");
+      map.set('cloud-tags', " tags in total");
+      map.set('copyright', "Copyright: ");
+      map.set('author', "Author: ");
+      map.set('link', "Link: ");
+      map.set('leave-message', "Leave a message");
+      map.set('format', "Links Format");
+      map.set('site-name', "Name: ");
+      map.set('site-link', "Link: ");
+      map.set('site-desc', "Desc: ");
+      map.set('stat', " related results, taking ");
+      map.set('stat-time', " ms");
+      map.set('site-img', "Image: ");
+    }
+
+    if (map.size > 0) {
+      let lanElems = document.querySelectorAll('.language');
+      lanElems.forEach(elem => {
+        let lan = elem.dataset.lan, text = map.get(lan);
+        if (elem.__proto__ === HTMLInputElement.prototype) {
+          elem.placeholder = text
+        } else {
+          if (elem.dataset.count) {
+            text = elem.dataset.count + text;
+          }
+          elem.textContent = text;
+        }
+      })
+    }
+  }
+  //拿来主义(真香)^_^，Clipboard 实现摘自掘金 https://juejin.im/post/5aefeb6e6fb9a07aa43c20af
+  window.Clipboard = (function (window, document, navigator) {
+    var textArea,
+      copy;
+
+    // 判断是不是ios端
+    function isOS() {
+      return navigator.userAgent.match(/ipad|iphone/i);
+    }
+    //创建文本元素
+    function createTextArea(text) {
+      textArea = document.createElement('textArea');
+      textArea.value = text;
+      textArea.style.width = 0;
+      textArea.style.height = 0;
+      textArea.clientHeight = 0;
+      textArea.clientWidth = 0;
+      document.body.appendChild(textArea);
+    }
+    //选择内容
+    function selectText() {
+      var range,
+        selection;
+
+      if (isOS()) {
+        range = document.createRange();
+        range.selectNodeContents(textArea);
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+    }
+
+    //复制到剪贴板
+    function copyToClipboard() {
+      try {
+        document.execCommand("Copy")
+      } catch (err) {
+        alert("复制错误！请手动复制！")
+      }
+      document.body.removeChild(textArea);
+    }
+
+    copy = function (text) {
+      createTextArea(text);
+      selectText();
+      copyToClipboard();
+    };
+
+    return {
+      copy: copy
+    };
+  })(window, document, navigator);
+
+  function copyCode(e) {
+    if (e.srcElement.tagName === 'SPAN' && e.srcElement.classList.contains('copy-code')) {
+      let code = e.currentTarget.querySelector('code');
+      var text = code.innerText;
+      if (e.srcElement.textContent === '复制成功') {
+        return;
+      }
+      e.srcElement.textContent = '复制成功';
+      (function (elem) {
+        setTimeout(() => {
+          if (elem.textContent === '复制成功') {
+            elem.textContent = '复制代码'
+          }
+        }, 1000);
+      })(e.srcElement)
+      Clipboard.copy(text);
+    }
+  }
+
+  let pres = document.querySelectorAll('pre');
+  pres.forEach(pre => {
+    let code = pre.querySelector('code');
+    let copyElem = document.createElement('span');
+    copyElem.classList.add('copy-code');
+    copyElem.textContent = '复制代码';
+    pre.appendChild(copyElem);
+    pre.onclick = copyCode
+  })
+
+</script>
+<script src="/media/js/motion.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+<script>
+  var scroll = new SmoothScroll('a[href*="#"]', {
+    speed: 200
+  });
+</script>
+
+
+
+
+
+  <div class="snow-container"></div>
+  <script src="/media/js/bg/canvas-nest.js"></script>
+  <script>
+  const config = {
+    color: '255,0,0',
+    count: 88,
+  };
+  // Using config rendering effect at 'element'.
+  const cn = new CanvasNest(document.querySelector('.snow-container'), config);
+  </script>
+
+</html>

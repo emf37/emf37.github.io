@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://emf37.github.io</id>
+    <title>EMF37</title>
+    <updated>2021-03-07T09:00:18.796Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://emf37.github.io"/>
+    <link rel="self" href="https://emf37.github.io/atom.xml"/>
+    <subtitle>Always Plosion | Markdown苦手</subtitle>
+    <logo>https://emf37.github.io/images/avatar.png</logo>
+    <icon>https://emf37.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, EMF37</rights>
+    <entry>
+        <title type="html"><![CDATA[使用PCSC/GlobalPlatformPro链接PN532管理卡片]]></title>
+        <id>https://emf37.github.io/TgewbzjGs/</id>
+        <link href="https://emf37.github.io/TgewbzjGs/">
+        </link>
+        <updated>2021-03-06T15:31:18.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OBS中tar_scm服务参数粗解]]></title>
+        <id>https://emf37.github.io/fLDGD7mtj/</id>
+        <link href="https://emf37.github.io/fLDGD7mtj/">
+        </link>
+        <updated>2021-02-23T14:37:51.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[从系统底层修改USB设备按键映射 ]]></title>
+        <id>https://emf37.github.io/Y-bcuCP2H/</id>
+        <link href="https://emf37.github.io/Y-bcuCP2H/">
+        </link>
+        <updated>2020-11-28T14:10:02.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[openSUSE 链接小米蓝牙遥控器 ]]></title>
+        <id>https://emf37.github.io/IwJvAaVkX/</id>
+        <link href="https://emf37.github.io/IwJvAaVkX/">
+        </link>
+        <updated>2020-11-26T14:08:26.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux中的Capabilities属性]]></title>
+        <id>https://emf37.github.io/-rigVMKXY/</id>
+        <link href="https://emf37.github.io/-rigVMKXY/">
+        </link>
+        <updated>2020-06-24T14:00:14.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[openSUSE系统中对Zypper的代理]]></title>
+        <id>https://emf37.github.io/5CmCOlubB/</id>
+        <link href="https://emf37.github.io/5CmCOlubB/">
+        </link>
+        <updated>2020-03-07T13:45:32.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[在NAT后的Windows服务器中搭建FTP服务器]]></title>
+        <id>https://emf37.github.io/qk7IZE8pB/</id>
+        <link href="https://emf37.github.io/qk7IZE8pB/">
+        </link>
+        <updated>2019-06-26T13:44:41.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[使用Buildah与其他途径构建镜像]]></title>
+        <id>https://emf37.github.io/EyA3rtPtE/</id>
+        <link href="https://emf37.github.io/EyA3rtPtE/">
+        </link>
+        <updated>2019-06-16T13:43:50.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[简单解决podman在非root用户下的报错(openSUSE Tumbleweed)(2021更新))]]></title>
+        <id>https://emf37.github.io/PJBRnd3hH/</id>
+        <link href="https://emf37.github.io/PJBRnd3hH/">
+        </link>
+        <updated>2019-06-15T13:39:39.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[记一次折腾寨板的经历]]></title>
+        <id>https://emf37.github.io/BF0wQKc0Q/</id>
+        <link href="https://emf37.github.io/BF0wQKc0Q/">
+        </link>
+        <updated>2019-03-16T13:38:26.000Z</updated>
+    </entry>
+</feed>
