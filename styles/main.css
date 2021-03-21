@@ -2066,7 +2066,7 @@ p > code {
       }
     @font-face {
       font-family: 'monaco';
-      src: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/fonts/monaco.ttf');
+      src: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/fonts/monaco.ttf');
     }
     * {
         font-family: 'monaco';
@@ -2190,15 +2190,15 @@ p > code {
     }.box-shadow-wrapper {
       box-shadow: none !important;
     }body {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/arrow.cur'), default;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/arrow.cur'), default;
     }a {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/cross.cur'), pointer !important;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/cross.cur'), pointer !important;
     }input, textarea, code {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/beam.cur'), text !important;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/beam.cur'), text !important;
     }code > span.copy-code {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/pen.cur'), text !important;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/pen.cur'), text !important;
     }.post img {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/nesw.cur'), zoom-in !important;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/nesw.cur'), zoom-in !important;
     }.post img {
-      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.2/media/curs/nwse.cur'), zoom-out !important;
+      cursor: url('https://cdn.jsdelivr.net/gh/emf37/emf37.github.io@3.8.3/media/curs/nwse.cur'), zoom-out !important;
     }
